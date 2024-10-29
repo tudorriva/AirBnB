@@ -44,3 +44,4 @@ Cancellation Policies
 
 
 
+![UML Diagramm](https://github.com/user-attachments/assets/ef3c5c73-1be4-48c0-94e3-9cb913ec9c37)
