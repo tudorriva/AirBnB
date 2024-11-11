@@ -1,8 +1,10 @@
 package Entities;
 
+import Repository.HasId;
+
 import java.util.Date;
 
-public class Payment {
+public class Payment implements HasId {
     private int paymentID;
     private double amount;
     private Date date;
@@ -40,4 +42,14 @@ public class Payment {
     public void setDate(Date date) {
         this.date = date;
 }
+
+    @Override
+    public int getId() {
+        return paymentID;
+    }
+
+    @Override
+    public void setId(int id) {
+        this.paymentID = id;
+    }
 }

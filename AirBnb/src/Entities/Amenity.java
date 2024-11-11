@@ -1,6 +1,8 @@
 package Entities;
 
-public class Amenity {
+import Repository.HasId;
+
+public class Amenity implements HasId {
     private int amenityID;
     private String name;
     private String description;
@@ -36,4 +38,13 @@ public class Amenity {
     }
 
 
+    @Override
+    public int getId() {
+        return amenityID;
+    }
+
+    @Override
+    public void setId(int id) {
+        this.amenityID = id;
+    }
 }

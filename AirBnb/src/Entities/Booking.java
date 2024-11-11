@@ -1,8 +1,10 @@
 package Entities;
 
+import Repository.HasId;
+
 import java.util.Date;
 
-public class Booking {
+public class Booking implements HasId{
     private int bookingID;
     private Date checkInDate;
     private Date checkOutDate;
@@ -52,5 +54,15 @@ public class Booking {
 
     public void setTotalPrice(double totalPrice) {
         this.totalPrice = totalPrice;
+    }
+
+    @Override
+    public int getId() {
+        return bookingID;
+    }
+
+    @Override
+    public void setId(int id) {
+        this.bookingID = id;
     }
 }

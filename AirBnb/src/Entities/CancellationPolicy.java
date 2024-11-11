@@ -1,6 +1,8 @@
 package Entities;
 
-public class CancellationPolicy {
+import Repository.HasId;
+
+public class CancellationPolicy implements HasId {
     private int policyID;
     private String description;
 
@@ -27,5 +29,15 @@ public class CancellationPolicy {
 
     public void applyPolicy() {
 
+    }
+
+    @Override
+    public int getId() {
+        return policyID;
+    }
+
+    @Override
+    public void setId(int id) {
+        this.policyID = id;
     }
 }

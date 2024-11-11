@@ -1,6 +1,8 @@
 package Entities;
 
-public class Property {
+import Repository.HasId;
+
+public class Property implements HasId {
     private int propertyID;
     private String address;
     private double pricePerNight;
@@ -50,5 +52,15 @@ public class Property {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Override
+    public int getId() {
+        return propertyID;
+    }
+
+    @Override
+    public void setId(int id) {
+        this.propertyID = id;
     }
 }

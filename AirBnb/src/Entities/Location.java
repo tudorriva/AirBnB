@@ -1,6 +1,8 @@
 package Entities;
 
-public class Location {
+import Repository.HasId;
+
+public class Location implements HasId {
     private int locationID;
     private String city;
     private String country;
@@ -36,5 +38,15 @@ public class Location {
 
     public void setLocationID(int locationID) {
         this.locationID = locationID;
+    }
+
+    @Override
+    public int getId() {
+        return locationID;
+    }
+
+    @Override
+    public void setId(int id) {
+        this.locationID = id;
     }
 }

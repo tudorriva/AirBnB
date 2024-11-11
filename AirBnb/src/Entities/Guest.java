@@ -1,6 +1,8 @@
 package Entities;
 
-public class Guest extends User {
+import Repository.HasId;
+
+public class Guest extends User implements HasId {
     private double guestRating;
 
     public Guest(int userID, String name, String email, String phone, double guestRating) {
@@ -20,5 +22,15 @@ public class Guest extends User {
 
     public void setGuestRating(double guestRating) {
         this.guestRating = guestRating;
+    }
+
+    @Override
+    public int getId() {
+        return userID;
+    }
+
+    @Override
+    public void setId(int id) {
+        this.userID = id;
     }
 }

@@ -1,8 +1,10 @@
 package Entities;
 
+import Repository.HasId;
+
 import java.util.Date;
 
-public class Review {
+public class Review implements HasId {
     private int reviewID;
     private double rating;
     private String comment;
@@ -49,5 +51,15 @@ public class Review {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    @Override
+    public int getId() {
+        return reviewID;
+    }
+
+    @Override
+    public void setId(int id) {
+        this.reviewID = id;
     }
 }
