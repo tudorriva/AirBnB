@@ -2,17 +2,49 @@ package Entities;
 
 import Repository.HasId;
 
-public class Property implements HasId {
+import java.util.Date;
+
+public class Property implements HasId , Bookable{
     private int propertyID;
     private String address;
     private double pricePerNight;
     private String description;
+    private Location location;
+    private Amenity amenity;
+    private CancellationPolicy cancellationPolicy;
 
-    public Property(int propertyID, String address, double pricePerNight, String description) {
+    public Property(int propertyID, String address, double pricePerNight, String description, Location location, Amenity amenity, CancellationPolicy cancellationPolicy) {
         this.propertyID = propertyID;
         this.address = address;
         this.pricePerNight = pricePerNight;
         this.description = description;
+        this.location = location;
+        this.amenity = amenity;
+        this.cancellationPolicy = cancellationPolicy;
+    }
+
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
+    public Amenity getAmenity() {
+        return amenity;
+    }
+
+    public void setAmenity(Amenity amenity) {
+        this.amenity = amenity;
+    }
+
+    public CancellationPolicy getCancellationPolicy() {
+        return cancellationPolicy;
+    }
+
+    public void setCancellationPolicy(CancellationPolicy cancellationPolicy) {
+        this.cancellationPolicy = cancellationPolicy;
     }
 
     public void addReview() {
@@ -63,4 +95,11 @@ public class Property implements HasId {
     public void setId(int id) {
         this.propertyID = id;
     }
+
+    @Override
+    public boolean checkAvailability(Date checkIn, Date checkOut) {
+        return false; // to be implemented
+    }
+
+
 }

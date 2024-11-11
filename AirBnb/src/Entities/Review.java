@@ -6,12 +6,16 @@ import java.util.Date;
 
 public class Review implements HasId {
     private int reviewID;
+    private int guestID;
+    private int propertyID;
     private double rating;
     private String comment;
     private Date date;
 
-    public Review(int reviewID, double rating, String comment, Date date) {
+    public Review(int reviewID, int guestID, int propertyID, double rating, String comment, Date date) {
         this.reviewID = reviewID;
+        this.guestID = guestID;
+        this.propertyID = propertyID;
         this.rating = rating;
         this.comment = comment;
         this.date = date;
@@ -62,4 +66,6 @@ public class Review implements HasId {
     public void setId(int id) {
         this.reviewID = id;
     }
+
+    public int getPropertyID() { return propertyID; }
 }

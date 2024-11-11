@@ -4,7 +4,7 @@ import Repository.HasId;
 
 import java.util.Date;
 
-public class Payment implements HasId {
+public class Payment implements HasId, Payable {
     private int paymentID;
     private double amount;
     private Date date;
@@ -15,6 +15,7 @@ public class Payment implements HasId {
         this.date = date;
     }
 
+    @Override
     public void processPayment() {
         // Logic to process payment *We'll do it in the future*
     }
