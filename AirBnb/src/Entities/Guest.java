@@ -1,3 +1,5 @@
+package Entities;
+
 public class Guest extends User {
     private double guestRating;
 

@@ -1,3 +1,5 @@
+package Entities;
+
 public class Host extends User {
     private double hostRating;
 

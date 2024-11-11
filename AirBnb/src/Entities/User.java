@@ -1,3 +1,5 @@
+package Entities;
+
 public abstract class User {
     protected int userID;
     protected String name;

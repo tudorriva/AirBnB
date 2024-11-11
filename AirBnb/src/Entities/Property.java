@@ -1,3 +1,5 @@
+package Entities;
+
 public class Property {
     private int propertyID;
     private String address;

@@ -1,3 +1,5 @@
+package Entities;
+
 public class Amenity {
     private int amenityID;
     private String name;

@@ -1,3 +1,5 @@
+package Entities;
+
 public class CancellationPolicy {
     private int policyID;
     private String description;
