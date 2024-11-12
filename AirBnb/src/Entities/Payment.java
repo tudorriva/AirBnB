@@ -8,16 +8,23 @@ public class Payment implements HasId, Payable {
     private int paymentID;
     private double amount;
     private Date date;
+    private boolean processed;
+
 
     public Payment(int paymentID, double amount, Date date) {
         this.paymentID = paymentID;
         this.amount = amount;
         this.date = date;
+        this.processed = false;
     }
 
     @Override
     public void processPayment() {
-        // Logic to process payment *We'll do it in the future*
+       this.processed = true;
+    }
+
+    public boolean isProcessed() {
+        return processed;
     }
 
     public int getPaymentID() {

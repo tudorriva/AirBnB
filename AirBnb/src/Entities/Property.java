@@ -6,6 +6,7 @@ import java.util.Date;
 
 public class Property implements HasId , Bookable{
     private int propertyID;
+    private int hostID;
     private String address;
     private double pricePerNight;
     private String description;
@@ -13,8 +14,9 @@ public class Property implements HasId , Bookable{
     private Amenity amenity;
     private CancellationPolicy cancellationPolicy;
 
-    public Property(int propertyID, String address, double pricePerNight, String description, Location location, Amenity amenity, CancellationPolicy cancellationPolicy) {
+    public Property(int propertyID, String address, double pricePerNight, String description, Location location, Amenity amenity, CancellationPolicy cancellationPolicy, int hostID) {
         this.propertyID = propertyID;
+        this.hostID = hostID;
         this.address = address;
         this.pricePerNight = pricePerNight;
         this.description = description;
@@ -84,6 +86,14 @@ public class Property implements HasId , Bookable{
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public int getHostID() {
+        return hostID;
+    }
+
+    public void setHostID(int hostID) {
+        this.hostID = hostID;
     }
 
     @Override
