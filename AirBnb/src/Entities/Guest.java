@@ -33,4 +33,15 @@ public class Guest extends User implements HasId {
     public void setId(int id) {
         this.userID = id;
     }
+
+    @Override
+    public String toString() {
+        return "Guest{" +
+                "guestRating=" + guestRating +
+                ", name='" + name + '\'' +
+                ", userID=" + userID +
+                ", email='" + email + '\'' +
+                ", phone='" + phone + '\'' +
+                '}';
+    }
 }

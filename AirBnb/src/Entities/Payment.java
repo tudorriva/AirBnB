@@ -47,6 +47,16 @@ public class Payment implements HasId, Payable {
         return date;
     }
 
+    @Override
+    public String toString() {
+        return "Payment{" +
+                "paymentID=" + paymentID +
+                ", amount=" + amount +
+                ", date=" + date +
+                ", processed=" + processed +
+                '}';
+    }
+
     public void setDate(Date date) {
         this.date = date;
 }

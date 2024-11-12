@@ -17,6 +17,19 @@ public class Booking implements HasId, Payable{
         return guestID;
     }
 
+    @Override
+    public String toString() {
+        return "Booking{" +
+                "bookingID=" + bookingID +
+                ", checkInDate=" + checkInDate +
+                ", checkOutDate=" + checkOutDate +
+                ", totalPrice=" + totalPrice +
+                ", guestID=" + guestID +
+                ", propertyID=" + propertyID +
+                ", payment=" + payment +
+                '}';
+    }
+
     public void setGuestID(int guestID) {
         this.guestID = guestID;
     }

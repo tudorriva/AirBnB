@@ -8,6 +8,16 @@ public class Amenity implements HasId {
     private String description;
     private int propertyID;
 
+    @Override
+    public String toString() {
+        return "Amenity{" +
+                "amenityID=" + amenityID +
+                ", name='" + name + '\'' +
+                ", description='" + description + '\'' +
+                ", propertyID=" + propertyID +
+                '}';
+    }
+
     public Amenity(int amenityID, String name, String description) {
         this.amenityID = amenityID;
         this.name = name;
