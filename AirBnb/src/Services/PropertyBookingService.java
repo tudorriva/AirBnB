@@ -34,39 +34,64 @@ public class PropertyBookingService {
         this.amenityRepo = amenityRepo;
     }
 
-    private void initializeRepositories() {
+    public void initializeRepositories() {
         // Adding Hosts
-        Host host1 = new Host(1, "Andrei Popescu", "andrei.popescu@example.com", "0722334455", 4.5);
-        Host host2 = new Host(2, "Ioana Ionescu", "ioana.ionescu@example.com", "0722456789", 4.7);
+        Host host1 = new Host(1, "Andrei Popescu", "andrei.popescu@domeniu.ro", "0722334455", 4.5);
+        Host host2 = new Host(2, "Ioana Ionescu", "ioana.ionescu@domeniu.ro", "0722456789", 4.7);
+        Host host3 = new Host(3, "Mihai Georgescu", "mihai.georgescu@domeniu.ro", "0722123456", 4.8);
         hostRepo.create(host1);
         hostRepo.create(host2);
+        hostRepo.create(host3);
 
         // Adding Guests
-        Guest guest1 = new Guest(1, "Maria Enescu", "maria.enescu@example.com", "0721345678", 4.3);
-        Guest guest2 = new Guest(2, "Bogdan Gheorghe", "bogdan.gheorghe@example.com", "0722987654", 4.6);
+        Guest guest1 = new Guest(1, "Maria Enescu", "maria.enescu@domeniu.ro", "0721345678", 4.3);
+        Guest guest2 = new Guest(2, "Bogdan Gheorghe", "bogdan.gheorghe@domeniu.ro", "0722987654", 4.6);
+        Guest guest3 = new Guest(3, "Elena Popa", "elena.popa@domeniu.ro", "0723456789", 4.4);
         guestRepo.create(guest1);
         guestRepo.create(guest2);
+        guestRepo.create(guest3);
 
         // Adding Locations
-        Location location1 = new Location(1, "București", "România");
-        Location location2 = new Location(2, "Cluj-Napoca", "România");
+        Location location1 = new Location(1, "Bucuresti", "Romania");
+        Location location2 = new Location(2, "Cluj-Napoca", "Romania");
+        Location location3 = new Location(3, "Timisoara", "Romania");
 
         // Adding Amenities
-        Amenity amenity1 = new Amenity(1, "WiFi", "Internet wireless de mare viteză");
-        Amenity amenity2 = new Amenity(2, "Parcare", "Parcare gratuită pe proprietate");
-        Amenity amenity3 = new Amenity(3, "Piscină", "Acces la piscină exterioară");
+        Amenity amenity1 = new Amenity(1, "WiFi", "Internet wireless de mare viteza");
+        Amenity amenity2 = new Amenity(2, "Parcare", "Parcare gratuita pe proprietate");
+        Amenity amenity3 = new Amenity(3, "Piscina", "Acces la piscina exterioara");
+        Amenity amenity4 = new Amenity(4, "Aer conditionat", "Aer conditionat in toate camerele");
 
         amenityRepo.create(amenity1);
         amenityRepo.create(amenity2);
         amenityRepo.create(amenity3);
+        amenityRepo.create(amenity4);
 
         // Adding Properties
-        Property property1 = new Property(1, "Strada Libertății 10", 250.0, "Apartament modern în centrul orașului", location1, amenity1, new CancellationPolicy(1, "Politică de anulare flexibilă"), 1);
-        Property property2 = new Property(2, "Bulevardul Eroilor 15", 300.0, "Vila spațioasă cu piscină", location2, amenity3, new CancellationPolicy(2, "Politică de anulare strictă"), 2);
-        propertyRepo.create(property1);
+        Property property1 = new Property(1, "Strada Libertatii 10", 250.0, "Apartament modern in centrul orasului", location1, amenity1, new CancellationPolicy(1, "Politica de anulare flexibila"), 1);
+        Property property2 = new Property(2, "Bulevardul Eroilor 15", 300.0, "Vila spatioasa cu piscina", location2, amenity3, new CancellationPolicy(2, "Politica de anulare stricta"), 2);
+        Property property3 = new Property(3, "Strada Unirii 20", 200.0, "Garsoniera confortabila", location3, amenity2, new CancellationPolicy(3, "Politica de anulare moderata"), 3);
+        Property property4 = new Property(4, "Strada Independentei 5", 350.0, "Casa de vacanta cu aer conditionat", location1, amenity4, new CancellationPolicy(4, "Politica de anulare flexibila"), 1);
         propertyRepo.create(property1);
         propertyRepo.create(property2);
+        propertyRepo.create(property3);
+        propertyRepo.create(property4);
 
+        // Adding Bookings
+        Booking booking1 = new Booking(1, new Date(), new Date(), 250.0, guest1.getId(), property1.getPropertyID(), null);
+        Booking booking2 = new Booking(2, new Date(), new Date(), 300.0, guest2.getId(), property2.getPropertyID(), null);
+        Booking booking3 = new Booking(3, new Date(), new Date(), 200.0, guest3.getId(), property3.getPropertyID(), null);
+        bookingRepo.create(booking1);
+        bookingRepo.create(booking2);
+        bookingRepo.create(booking3);
+
+        // Adding Reviews
+        Review review1 = new Review(1, guest1.getId(), property1.getPropertyID(), 4.5, "Locatie excelenta, foarte curata.", new Date());
+        Review review2 = new Review(2, guest2.getId(), property2.getPropertyID(), 4.0, "Vila este foarte spatioasa si confortabila.", new Date());
+        Review review3 = new Review(3, guest3.getId(), property3.getPropertyID(), 4.2, "Garsoniera este confortabila si bine echipata.", new Date());
+        reviewRepo.create(review1);
+        reviewRepo.create(review2);
+        reviewRepo.create(review3);
     }
 
 
@@ -219,7 +244,7 @@ public class PropertyBookingService {
 
     public List<Payment> getPaymentsForHost(int hostId) {
         return bookingRepo.getAll().stream()
-                .filter(booking -> booking.getPropertyID().getHostId() == hostId)
+                .filter(booking -> getPropertyById(booking.getPropertyID()).getHostID() == hostId)
                 .map(Booking::getPayment)
                 .filter(Payment::isProcessed)
                 .collect(Collectors.toList());
@@ -227,7 +252,7 @@ public class PropertyBookingService {
 
     public List<Payment> getTransactionHistoryForHost(int hostId) {
         return bookingRepo.getAll().stream()
-                .filter(booking -> booking.getPropertyId().getHostId() == hostId)
+                .filter(booking -> getPropertyById(booking.getPropertyId()).getHostID() == hostId)
                 .map(Booking::getPayment)
                 .collect(Collectors.toList());
     }

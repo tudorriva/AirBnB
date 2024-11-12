@@ -2,10 +2,12 @@ package Controller;
 
 import Entities.*;
 import Services.PropertyBookingService;
+import Helpers.HelperFunctions;
 
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.stream.Collectors;
 
 public class PropertyBookingController {
     private final PropertyBookingService bookingService;
@@ -20,7 +22,6 @@ public class PropertyBookingController {
         bookingService.addHost(host);
         System.out.println("Host added successfully");
     }
-
 
     public void listAllHosts() {
         List<Host> hosts = bookingService.getAllHosts();
@@ -43,6 +44,10 @@ public class PropertyBookingController {
         return bookingService.getAllHosts();
     }
 
+    public List<Property> getPropertiesForHost(int hostId) {
+        return bookingService.getPropertiesForHost(hostId);
+    }
+
     public void listPropertiesForHost(Host host) {
         List<Property> properties = bookingService.getPropertiesForHost(host.getId());
         if (properties.isEmpty()) {
@@ -55,13 +60,51 @@ public class PropertyBookingController {
         }
     }
 
+    public void showPropertiesForHost(Host host) {
+        List<Property> properties = bookingService.getPropertiesForHost(host.getId());
+        if (properties.isEmpty()) {
+            System.out.println("No properties found for this host.");
+            return;
+        }
+
+        System.out.println("Properties managed by host " + host.getName() + ":");
+        for (Property property : properties) {
+            System.out.println("Property ID: " + property.getPropertyID());
+            System.out.println("Address: " + property.getAddress());
+            System.out.println("Price per Night: " + property.getPricePerNight());
+            System.out.println("Description: " + property.getDescription());
+            System.out.println("Location: " + property.getLocation().getCity() + ", " + property.getLocation().getCountry());
+            System.out.println("Amenity: " + property.getAmenity().getName() + " - " + property.getAmenity().getDescription());
+            System.out.println("Cancellation Policy: " + property.getCancellationPolicy().getDescription());
+            System.out.println();
+        }
+    }
+
+    public void listProperty(Host host, String address, double pricePerNight, String description, Location location, Amenity amenity, CancellationPolicy cancellationPolicy) {
+        int id = HelperFunctions.randomId();
+        Property property = new Property(id, address, pricePerNight, description, location, amenity, cancellationPolicy, host.getId());
+        bookingService.addProperty(property);
+    }
+
+    public void addAmenityToProperty(Host host, int propertyIndex, String name, String description) {
+        List<Property> properties = getPropertiesForHost(host.getId());
+        if (propertyIndex < 0 || propertyIndex >= properties.size()) {
+            System.out.println("Invalid property number.");
+            return;
+        }
+
+        Property property = properties.get(propertyIndex);
+        int id = HelperFunctions.randomId();
+        Amenity amenity = new Amenity(id, name, description);
+        bookingService.addAmenityToProperty(property, amenity);
+    }
+
     // -------------------- Guest Operations --------------------
 
     public void addGuest(Guest guest) {
         bookingService.addGuest(guest);
         System.out.println("Guest added successfully");
     }
-
 
     public void listAllGuests() {
         List<Guest> guests = bookingService.getAllGuests();
@@ -76,7 +119,6 @@ public class PropertyBookingController {
         }
     }
 
-
     public Guest getGuestById(int id) {
         return bookingService.getGuestById(id);
     }
@@ -89,14 +131,64 @@ public class PropertyBookingController {
         return bookingService.getBookingsForGuest(guestId);
     }
 
-    // -------------------- Property Operations --------------------
+    public void bookProperty(Guest guest, int propertyId, Date checkInDate, Date checkOutDate) {
+        Property property = bookingService.getPropertyById(propertyId);
+        if (property != null) {
+            boolean success = bookingService.bookProperty(guest, property, checkInDate, checkOutDate);
+            if (success) {
+                System.out.println("Booking successful for property: " + property.getAddress());
+            } else {
+                System.out.println("Booking failed. The property may not be available for the requested dates.");
+            }
+        } else {
+            System.out.println("Invalid property ID.");
+        }
+    }
 
+    public void viewBookings(Guest guest) {
+        List<Booking> bookings = bookingService.getBookingsForGuest(guest.getId());
+        if (bookings.isEmpty()) {
+            System.out.println("No bookings found.");
+        } else {
+            bookings.forEach(System.out::println);
+        }
+    }
+
+    public void leaveReview(Guest guest, int propertyId, double rating, String comment) {
+        Property property = bookingService.getPropertyById(propertyId);
+        if (property != null) {
+            bookingService.addReview(guest, property, rating, comment);
+        } else {
+            System.out.println("Invalid property ID.");
+        }
+    }
+
+    public void viewAllPropertiesByLocation(Location location) {
+        List<Property> properties = bookingService.getPropertiesByLocation(location);
+        if (properties.isEmpty()) {
+            System.out.println("No properties found for location: " + location);
+        } else {
+            properties.forEach(System.out::println);
+        }
+    }
+
+    public void viewAllPropertiesByDate(Date date) {
+        List<Property> properties = bookingService.getAllProperties().stream()
+                .filter(property -> property.checkAvailability(date, date))
+                .collect(Collectors.toList());
+        if (properties.isEmpty()) {
+            System.out.println("No properties available on: " + date);
+        } else {
+            properties.forEach(System.out::println);
+        }
+    }
+
+    // -------------------- Property Operations --------------------
 
     public void addProperty(Property property) {
         bookingService.addProperty(property);
         System.out.println("Property added successfully");
     }
-
 
     public void listAllProperties() {
         List<Property> properties = bookingService.getAllProperties();
@@ -111,11 +203,9 @@ public class PropertyBookingController {
         }
     }
 
-
     public Property getPropertyById(int id) {
         return bookingService.getPropertyById(id);
     }
-
 
     public void listPropertiesByLocation(Location location) {
         List<Property> properties = bookingService.getPropertiesByLocation(location);
@@ -132,12 +222,10 @@ public class PropertyBookingController {
 
     // -------------------- Amenity Operations --------------------
 
-
     public void addAmenityToProperty(Property property, Amenity amenity) {
         bookingService.addAmenityToProperty(property, amenity);
         System.out.println("Amenity added to property: " + property.getAddress());
     }
-
 
     public void listAmenitiesForProperty(Property property) {
         List<Amenity> amenities = bookingService.getAmenitiesForProperty(property);
@@ -164,7 +252,6 @@ public class PropertyBookingController {
         }
     }
 
-
     public void listBookingsForProperty(int propertyId) {
         List<Booking> bookings = bookingService.getBookingsForProperty(propertyId);
 
@@ -185,7 +272,6 @@ public class PropertyBookingController {
         System.out.println("Review added for property: " + property.getAddress());
     }
 
-
     public void listReviewsForProperty(int propertyId) {
         List<Review> reviews = bookingService.getReviewsForProperty(propertyId);
 
@@ -198,7 +284,8 @@ public class PropertyBookingController {
             }
         }
     }
-    // -------------------- Review Operations --------------------
+
+    // -------------------- Payment Operations --------------------
 
     public void makePayment(Guest guest, int bookingId) {
         Booking booking = bookingService.getBookingById(bookingId);
