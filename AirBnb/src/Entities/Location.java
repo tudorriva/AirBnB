@@ -46,6 +46,15 @@ public class Location implements HasId {
     }
 
     @Override
+    public String toString() {
+        return "Location{" +
+                "locationID=" + locationID +
+                ", city='" + city + '\'' +
+                ", country='" + country + '\'' +
+                '}';
+    }
+
+    @Override
     public void setId(int id) {
         this.locationID = id;
     }

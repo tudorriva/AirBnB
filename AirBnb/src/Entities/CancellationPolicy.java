@@ -37,6 +37,14 @@ public class CancellationPolicy implements HasId {
     }
 
     @Override
+    public String toString() {
+        return "CancellationPolicy{" +
+                "policyID=" + policyID +
+                ", description='" + description + '\'' +
+                '}';
+    }
+
+    @Override
     public void setId(int id) {
         this.policyID = id;
     }

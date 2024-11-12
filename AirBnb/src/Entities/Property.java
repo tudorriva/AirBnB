@@ -25,6 +25,8 @@ public class Property implements HasId , Bookable{
         this.cancellationPolicy = cancellationPolicy;
     }
 
+
+
     public Location getLocation() {
         return location;
     }

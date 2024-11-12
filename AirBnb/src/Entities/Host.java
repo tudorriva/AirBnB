@@ -33,4 +33,15 @@ public class Host extends User implements HasId {
     public void setId(int id) {
         this.userID = id;
     }
+
+    @Override
+    public String toString() {
+        return "Host{" +
+                "hostRating=" + hostRating +
+                ", name='" + name + '\'' +
+                ", userID=" + userID +
+                ", email='" + email + '\'' +
+                ", phone='" + phone + '\'' +
+                '}';
+    }
 }

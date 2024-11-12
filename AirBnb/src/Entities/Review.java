@@ -67,5 +67,17 @@ public class Review implements HasId {
         this.reviewID = id;
     }
 
+    @Override
+    public String toString() {
+        return "Review{" +
+                "reviewID=" + reviewID +
+                ", guestID=" + guestID +
+                ", propertyID=" + propertyID +
+                ", rating=" + rating +
+                ", comment='" + comment + '\'' +
+                ", date=" + date +
+                '}';
+    }
+
     public int getPropertyID() { return propertyID; }
 }
