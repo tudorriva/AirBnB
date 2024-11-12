@@ -1,31 +1,37 @@
+package Controller;
+
 import Entities.Booking;
-import java.util.ArrayList;
+import Entities.Payment;
+import Repository.IRepository;
+import Repository.InMemoryRepo;
+
 import java.util.Date;
 import java.util.List;
 
 public class BookingController {
-    private List<Booking> bookings;
+    private final IRepository<Booking> bookingRepo;
 
     public BookingController() {
-        bookings = new ArrayList<>();
+        this.bookingRepo = new InMemoryRepo<>();
     }
 
-    public void addBooking(Booking booking) {
-        bookings.add(booking);
+    public void addBooking(Date checkInDate, Date checkOutDate, double totalPrice, int guestID, int propertyID, Payment payment) {
+        Booking booking = new Booking(0, checkOutDate, checkInDate, totalPrice, guestID, propertyID, payment);
+        bookingRepo.create(booking);
     }
 
     public List<Booking> getAllBookings() {
-        return bookings;
+        return bookingRepo.getAll();
     }
 
     public void cancelBooking(int bookingID) {
-        bookings.removeIf(booking -> booking.getBookingID() == bookingID);
+        bookingRepo.delete(bookingID);
     }
 
     public Booking getBookingById(int bookingID) {
-        return bookings.stream()
-                .filter(booking -> booking.getBookingID() == bookingID)
-                .findFirst()
-                .orElse(null);
+        return bookingRepo.read(bookingID);
+    }
+
+    public void addBooking(Booking booking) {
     }
 }
