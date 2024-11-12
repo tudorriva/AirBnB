@@ -7,6 +7,7 @@ import Repository.IRepository;
 import java.util.Date;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Properties;
 import java.util.stream.Collectors;
 
 public class PropertyBookingService {
@@ -60,8 +61,9 @@ public class PropertyBookingService {
         amenityRepo.create(amenity3);
 
         // Adding Properties
-        Property property1 = new Property(1, "Strada Libertății 10", 250.0, "Apartament modern în centrul orașului", location1, amenity1, new CancellationPolicy(1, "Politică de anulare flexibilă"));
-        Property property2 = new Property(2, "Bulevardul Eroilor 15", 300.0, "Vila spațioasă cu piscină", location2, amenity3, new CancellationPolicy(2, "Politică de anulare strictă"));
+        Property property1 = new Property(1, "Strada Libertății 10", 250.0, "Apartament modern în centrul orașului", location1, amenity1, new CancellationPolicy(1, "Politică de anulare flexibilă"), 1);
+        Property property2 = new Property(2, "Bulevardul Eroilor 15", 300.0, "Vila spațioasă cu piscină", location2, amenity3, new CancellationPolicy(2, "Politică de anulare strictă"), 2);
+        propertyRepo.create(property1);
         propertyRepo.create(property1);
         propertyRepo.create(property2);
 
@@ -84,6 +86,28 @@ public class PropertyBookingService {
 
     public List<Guest> getAllGuests() { return guestRepo.getAll(); }
 
+    public Host getHostById(int id) {
+        return hostRepo.read(id);
+    }
+    public Guest getGuestById(int id) {
+        return guestRepo.read(id);
+    }
+
+    public List<Booking> getBookingsForGuest(int guestId) {
+        return bookingRepo.getAll().stream()
+                .filter(booking -> booking.getGuestID() == guestId)
+                .collect(Collectors.toList());
+    }
+
+    public List<Property> getPropertiesForHost(int hostId) {
+        return propertyRepo.getAll().stream()
+                .filter(property -> property.getHostID() == hostId)
+                .collect(Collectors.toList());
+    }
+
+
+
+
     // -------------------- Property and Amenity Management --------------------
 
     public void addProperty(Property property) {
@@ -92,6 +116,10 @@ public class PropertyBookingService {
     }
 
     public List<Property> getAllProperties() { return propertyRepo.getAll(); }
+
+    public Property getPropertyById(int id) {
+        return propertyRepo.read(id);
+    }
 
     public List<Property> getPropertiesByLocation(Location location) {
         return propertyRepo.getAll().stream()
@@ -111,6 +139,12 @@ public class PropertyBookingService {
                 .filter(amenity -> amenity.getPropertyID() == property.getId())
                 .collect(Collectors.toList());
     }
+
+    public Property getPropertyForBooking(Booking booking) {
+        return propertyRepo.read(booking.getPropertyID());
+    }
+
+
 
     // -------------------- Booking Management --------------------
 
@@ -141,6 +175,10 @@ public class PropertyBookingService {
                 .collect(Collectors.toList());
     }
 
+    public Booking getBookingById(int bookingId) {
+        return bookingRepo.read(bookingId);
+    }
+
     // -------------------- Review Management --------------------
 
     public void addReview(Guest guest, Property property, double rating, String comment) {
@@ -168,4 +206,32 @@ public class PropertyBookingService {
     private int generateUniqueId() {
         return (int) (Math.random() * 10000);
     }
+
+    public void processPaymentForBooking(Booking booking) {
+        Payment payment = booking.getPayment();
+        if (!payment.isProcessed()) {
+            payment.processPayment();
+            System.out.println("Payment processed for booking ID: " + booking.getId());
+        } else {
+            System.out.println("Payment has already been processed for this booking.");
+        }
+    }
+
+    public List<Payment> getPaymentsForHost(int hostId) {
+        return bookingRepo.getAll().stream()
+                .filter(booking -> booking.getPropertyID().getHostId() == hostId)
+                .map(Booking::getPayment)
+                .filter(Payment::isProcessed)
+                .collect(Collectors.toList());
+    }
+
+    public List<Payment> getTransactionHistoryForHost(int hostId) {
+        return bookingRepo.getAll().stream()
+                .filter(booking -> booking.getPropertyId().getHostId() == hostId)
+                .map(Booking::getPayment)
+                .collect(Collectors.toList());
+    }
+
+
+
 }
