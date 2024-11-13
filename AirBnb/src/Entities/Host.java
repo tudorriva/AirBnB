@@ -1,7 +1,5 @@
 package Entities;
 
-import Repository.HasId;
-
 public class Host extends User implements HasId {
     private double hostRating;
 

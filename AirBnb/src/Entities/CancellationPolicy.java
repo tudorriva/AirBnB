@@ -1,7 +1,5 @@
 package Entities;
 
-import Repository.HasId;
-
 public class CancellationPolicy implements HasId {
     private int policyID;
     private String description;

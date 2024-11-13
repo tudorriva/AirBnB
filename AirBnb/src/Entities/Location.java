@@ -1,7 +1,5 @@
 package Entities;
 
-import Repository.HasId;
-
 public class Location implements HasId {
     private int locationID;
     private String city;

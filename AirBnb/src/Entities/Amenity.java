@@ -1,7 +1,5 @@
 package Entities;
 
-import Repository.HasId;
-
 public class Amenity implements HasId {
     private int amenityID;
     private String name;

@@ -1,8 +1,8 @@
 package Entities;
 
-import Repository.HasId;
-
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class Property implements HasId , Bookable{
     private int propertyID;
@@ -108,10 +108,9 @@ public class Property implements HasId , Bookable{
         this.propertyID = id;
     }
 
+
     @Override
     public boolean checkAvailability(Date checkIn, Date checkOut) {
-        return false; // to be implemented
+        return true;
     }
-
-
 }

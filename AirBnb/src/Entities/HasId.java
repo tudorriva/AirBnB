@@ -1,4 +1,4 @@
-package Repository;
+package Entities;
 
 public interface HasId {
     int getId();

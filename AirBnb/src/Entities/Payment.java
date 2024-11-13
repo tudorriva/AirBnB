@@ -1,7 +1,5 @@
 package Entities;
 
-import Repository.HasId;
-
 import java.util.Date;
 
 public class Payment implements HasId, Payable {

@@ -277,7 +277,7 @@ public class PropertyBookingService {
      * @return true if the booking was successful, false otherwise
      */
     public boolean bookProperty(Guest guest, Property property, Date checkInDate, Date checkOutDate) {
-        if (property.checkAvailability(checkInDate, checkOutDate)) {
+        if (checkAvailability(property.getId(), checkInDate, checkOutDate)) {
             double totalPrice = property.getPricePerNight() * getDaysBetween(checkInDate, checkOutDate);
 
             int paymentId = generateUniqueId();
@@ -288,11 +288,11 @@ public class PropertyBookingService {
             Booking booking = new Booking(bookingId, checkOutDate, checkInDate, totalPrice, guest.getId(), property.getId(), payment);
 
             bookingRepo.create(booking);
-            System.out.println("Booking created successfully for property: " + property.getAddress() + " with ID: " + booking.getId());
+            // System.out.println("Booking created successfully for property: " + property.getAddress() + " with ID: " + booking.getId());
 
             return true;
         }
-        System.out.println("Property is not available for the requested dates.");
+        // System.out.println("Property is not available for the requested dates.");
         return false;
     }
 
@@ -412,5 +412,18 @@ public class PropertyBookingService {
                 .filter(booking -> getPropertyById(booking.getPropertyId()).getHostID() == hostId)
                 .map(Booking::getPayment)
                 .collect(Collectors.toList());
+    }
+
+    public boolean checkAvailability(int propertyId, Date checkInDate, Date checkOutDate) {
+        List<Booking> bookings = bookingRepo.getAll().stream()
+                .filter(booking -> booking.getPropertyID() == propertyId)
+                .collect(Collectors.toList());
+
+        for (Booking booking : bookings) {
+            if (booking.getCheckInDate().before(checkOutDate) && booking.getCheckOutDate().after(checkInDate)) {
+                return false; // Overlapping booking found
+            }
+        }
+        return true; // No overlapping bookings
     }
 }

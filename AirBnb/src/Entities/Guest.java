@@ -1,7 +1,5 @@
 package Entities;
 
-import Repository.HasId;
-
 public class Guest extends User implements HasId {
     private double guestRating;
 
