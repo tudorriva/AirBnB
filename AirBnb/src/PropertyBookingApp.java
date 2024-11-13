@@ -8,15 +8,33 @@ import Views.HostView;
 
 import java.util.Scanner;
 
+/**
+ * Main application class for the Property Booking System.
+ * Initializes repositories, services, controllers, and views for the application.
+ * Provides a main menu interface to navigate between different views: Admin, Guest, and Host.
+ */
 public class PropertyBookingApp {
     private final PropertyBookingController controller;
     private final Scanner scanner;
 
+    /**
+     * Constructs a new PropertyBookingApp with the specified controller.
+     * Initializes a Scanner instance for user input.
+     *
+     * @param controller the main controller used for managing application logic.
+     */
     public PropertyBookingApp(PropertyBookingController controller) {
         this.controller = controller;
         this.scanner = new Scanner(System.in);
     }
 
+    /**
+     * Main method to start the Property Booking application.
+     * Initializes repositories, services, controllers, and the main application instance.
+     * Runs the main application loop.
+     *
+     * @param args command-line arguments (not used).
+     */
     public static void main(String[] args) {
         // Initialize Repositories
         InMemoryRepo<Host> hostRepo = new InMemoryRepo<>();
@@ -40,6 +58,10 @@ public class PropertyBookingApp {
         app.run();
     }
 
+    /**
+     * Runs the main application loop.
+     * Displays the main menu and handles user input to navigate between views.
+     */
     private void run() {
         boolean running = true;
         while (running) {
@@ -57,6 +79,10 @@ public class PropertyBookingApp {
         System.out.println("Exiting the Property Booking System. Goodbye!");
     }
 
+    /**
+     * Displays the main menu options to the user.
+     * Options include navigating to Admin, Guest, and Host views or exiting the application.
+     */
     private void showMainMenu() {
         System.out.println("\nMain Menu:");
         System.out.println("1. Admin View");
