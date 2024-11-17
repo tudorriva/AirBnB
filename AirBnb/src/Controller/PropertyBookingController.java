@@ -301,6 +301,16 @@ public class PropertyBookingController {
         }
     }
 
+    public void filterGuestsByBookingCount(int minBookings) {
+        List<Guest> guests = bookingService.filterGuestsByBookingCount(minBookings);
+        if (guests.isEmpty()) {
+            System.out.println("No guests found with more than " + minBookings + " bookings.");
+        } else {
+            System.out.println("Guests with more than " + minBookings + " bookings:");
+            guests.forEach(System.out::println);
+        }
+    }
+
     // -------------------- Property Operations --------------------
 
     /**
@@ -354,6 +364,16 @@ public class PropertyBookingController {
             for (Property property : properties) {
                 System.out.println(property);
             }
+        }
+    }
+
+    public void filterPropertiesByLocation(Location location) {
+        List<Property> properties = bookingService.filterPropertiesByLocation(location);
+        if (properties.isEmpty()) {
+            System.out.println("No properties found in the specified location: " + location.getCity() + ", " + location.getCountry());
+        } else {
+            System.out.println("Properties in " + location.getCity() + ", " + location.getCountry() + ":");
+            properties.forEach(System.out::println);
         }
     }
 

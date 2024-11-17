@@ -42,7 +42,7 @@ public class GuestView {
                 case 2 -> controller.viewBookings(guest);
                 case 3 -> leaveReview(guest);
                 case 4 -> makePayment(guest);
-                case 5 -> viewPropertiesByLocation();
+                case 5 -> filterPropertiesByLocation();
                 case 6 -> viewPropertiesByDate();
                 case 0 -> running = false;
                 default -> System.out.println("Invalid choice. Please try again.");
@@ -56,7 +56,7 @@ public class GuestView {
         System.out.println("2. View My Bookings");
         System.out.println("3. Leave a Review");
         System.out.println("4. Make a Payment");
-        System.out.println("5. View Properties by Location");
+        System.out.println("5. Filter Properties by Location");
         System.out.println("6. View Properties by Date");
         System.out.println("0. Go back");
         System.out.print("Choose an option: ");
@@ -94,14 +94,13 @@ public class GuestView {
         controller.makePayment(guest, bookingId);
     }
 
-    private void viewPropertiesByLocation() {
-        System.out.print("Enter location city: ");
+    private void filterPropertiesByLocation() {
+        System.out.print("Enter city: ");
         String city = scanner.nextLine();
-        System.out.print("Enter location country: ");
+        System.out.print("Enter country: ");
         String country = scanner.nextLine();
-        Location location = new Location(HelperFunctions.randomId(), city, country);
-
-        controller.viewAllPropertiesByLocation(location);
+        Location location = new Location(city, country);
+        controller.filterPropertiesByLocation(location);
     }
 
     private void viewPropertiesByDate() {

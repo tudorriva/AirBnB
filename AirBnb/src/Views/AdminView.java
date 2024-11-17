@@ -26,6 +26,7 @@ public class AdminView {
                 case 2 -> addGuest();
                 case 3 -> controller.listAllHosts();
                 case 4 -> controller.listAllGuests();
+                case 5 -> filterGuestsByBookingCount();
                 case 0 -> running = false;
                 default -> System.out.println("Invalid choice. Please try again.");
             }
@@ -38,6 +39,7 @@ public class AdminView {
         System.out.println("2. Add a new Guest");
         System.out.println("3. View all Hosts");
         System.out.println("4. View all Guests");
+        System.out.println("5. Filter Guests by Booking Count");
         System.out.println("0. Go back");
         System.out.print("Choose an option: ");
     }
@@ -70,5 +72,11 @@ public class AdminView {
         int id = HelperFunctions.randomId();
         Guest guest = new Guest(id, name, email, phone, rating);
         controller.addGuest(guest);
+    }
+
+    private void filterGuestsByBookingCount() {
+        System.out.print("Enter minimum number of bookings: ");
+        int minBookings = Integer.parseInt(scanner.nextLine());
+        controller.filterGuestsByBookingCount(minBookings);
     }
 }

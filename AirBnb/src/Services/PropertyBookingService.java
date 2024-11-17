@@ -4,10 +4,7 @@ package Services;
 import Entities.*;
 import Repository.IRepository;
 
-import java.util.Date;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Properties;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -265,6 +262,18 @@ public class PropertyBookingService {
         return propertyRepo.read(booking.getPropertyID());
     }
 
+    /**
+     * Filters properties by a specific location.
+     *
+     * @param location the location to filter properties by
+     * @return a list of properties in the specified location
+     */
+    public List<Property> filterPropertiesByLocation(Location location) {
+        return propertyRepo.getAll().stream()
+                .filter(property -> property.getLocation().equals(location))
+                .collect(Collectors.toList());
+    }
+
     // -------------------- Booking Management --------------------
 
     /**
@@ -316,6 +325,21 @@ public class PropertyBookingService {
      */
     public Booking getBookingById(int bookingId) {
         return bookingRepo.read(bookingId);
+    }
+
+    /**
+     * Filters guests who have made more than a specified number of bookings.
+     *
+     * @param minBookings the minimum number of bookings a guest must have
+     * @return a list of guests with bookings above the specified threshold
+     */
+    public List<Guest> filterGuestsByBookingCount(int minBookings) {
+        Map<Integer, Long> guestBookingCount = bookingRepo.getAll().stream()
+                .collect(Collectors.groupingBy(Booking::getGuestID, Collectors.counting()));
+
+        return guestRepo.getAll().stream()
+                .filter(guest -> guestBookingCount.getOrDefault(guest.getId(), 0L) > minBookings)
+                .collect(Collectors.toList());
     }
 
     // -------------------- Review Management --------------------

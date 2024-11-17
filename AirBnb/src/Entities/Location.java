@@ -11,6 +11,11 @@ public class Location implements HasId {
         this.country = country;
     }
 
+    public Location(String city, String country) {
+        this.city = city;
+        this.country = country;
+    }
+
     public void getPropertiesByLocation() {
     }
 
