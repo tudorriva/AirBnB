@@ -58,6 +58,7 @@ public class HostView {
     }
 
     private void listProperty(Host host) {
+        int prop_id = HelperFunctions.randomId();
         System.out.print("Enter property address: ");
         String address = scanner.nextLine();
         System.out.print("Enter price per night: ");
@@ -77,14 +78,14 @@ public class HostView {
         System.out.print("Enter amenity description: ");
         String amenityDescription = scanner.nextLine();
         int id2 = HelperFunctions.randomId();
-        Amenity amenity = new Amenity(id2, amenityName, amenityDescription);
+        Amenity amenity = new Amenity(id2, amenityName, amenityDescription, prop_id);
 
         System.out.print("Enter cancellation policy description: ");
         String cancellationPolicyDescription = scanner.nextLine();
         int id3 = HelperFunctions.randomId();
         CancellationPolicy cancellationPolicy = new CancellationPolicy(id3, cancellationPolicyDescription);
 
-        controller.listProperty(host, address, pricePerNight, description, location, amenity, cancellationPolicy);
+        controller.listProperty(prop_id, host, address, pricePerNight, description, location, amenity, cancellationPolicy);
     }
 
     private void addAmenity(Host host) {

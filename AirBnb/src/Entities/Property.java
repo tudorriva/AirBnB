@@ -108,6 +108,19 @@ public class Property implements HasId , Bookable{
         this.propertyID = id;
     }
 
+    @Override
+    public String toString() {
+        return "Property{" +
+                "propertyID=" + propertyID +
+                ", hostID=" + hostID +
+                ", address='" + address + '\'' +
+                ", pricePerNight=" + pricePerNight +
+                ", description='" + description + '\'' +
+                ", location=" + location +
+                ", amenity=" + amenity +
+                ", cancellationPolicy=" + cancellationPolicy +
+                '}';
+    }
 
     @Override
     public boolean checkAvailability(Date checkIn, Date checkOut) {

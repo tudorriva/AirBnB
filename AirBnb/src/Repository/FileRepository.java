@@ -36,7 +36,7 @@ public class FileRepository<T extends HasId> implements IRepository<T> {
     }
 
     @Override
-    public List getAll() {
+    public List<T> getAll() {
         return readDataFromFile().values().stream().toList();
     }
 
@@ -48,23 +48,23 @@ public class FileRepository<T extends HasId> implements IRepository<T> {
 
     private Map<Integer, T> readDataFromFile() {
         File file = new File(filePath);
-        if(!file.exists()) {
+        if (!file.exists()) {
             return new HashMap<>();
         }
 
-        try(ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
+        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
             return (Map<Integer, T>) ois.readObject();
         } catch (IOException | ClassNotFoundException e) {
+            e.printStackTrace();
             return new HashMap<>();
         }
     }
 
     private void writeDataToFile(Map<Integer, T> data) {
-        try(ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath))) {
+        try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(filePath))) {
             oos.writeObject(data);
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
 }

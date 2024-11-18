@@ -1,6 +1,6 @@
 package Entities;
 
-public abstract class User {
+public abstract class User implements HasId{
     protected int userID;
     protected String name;
     protected String email;
@@ -11,14 +11,6 @@ public abstract class User {
         this.name = name;
         this.email = email;
         this.phone = phone;
-    }
-
-    public int getUserID() {
-        return userID;
-    }
-
-    public void setUserID(int userID) {
-        this.userID = userID;
     }
 
     public String getEmail() {

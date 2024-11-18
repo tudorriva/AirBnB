@@ -16,7 +16,7 @@ public class Amenity implements HasId {
                 '}';
     }
 
-    public Amenity(int amenityID, String name, String description) {
+    public Amenity(int amenityID, String name, String description, int propertyID) {
         this.amenityID = amenityID;
         this.name = name;
         this.description = description;

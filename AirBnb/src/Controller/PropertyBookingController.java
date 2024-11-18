@@ -134,8 +134,7 @@ public class PropertyBookingController {
      * @param amenity the amenity of the property
      * @param cancellationPolicy the cancellation policy of the property
      */
-    public void listProperty(Host host, String address, double pricePerNight, String description, Location location, Amenity amenity, CancellationPolicy cancellationPolicy) {
-        int id = HelperFunctions.randomId();
+    public void listProperty(int id, Host host, String address, double pricePerNight, String description, Location location, Amenity amenity, CancellationPolicy cancellationPolicy) {
         Property property = new Property(id, address, pricePerNight, description, location, amenity, cancellationPolicy, host.getId());
         bookingService.addProperty(property);
     }
@@ -157,7 +156,7 @@ public class PropertyBookingController {
 
         Property property = properties.get(propertyIndex);
         int id = HelperFunctions.randomId();
-        Amenity amenity = new Amenity(id, name, description);
+        Amenity amenity = new Amenity(id, name, description, property.getPropertyID());
         bookingService.addAmenityToProperty(property, amenity);
     }
 
