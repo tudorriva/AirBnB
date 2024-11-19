@@ -6,9 +6,9 @@ public class Review implements HasId {
     private int reviewID;
     private int guestID;
     private int propertyID;
-    private double rating;
+    private double rating; // Used for sorting by rating
     private String comment;
-    private Date date;
+    private Date date; // Used for sorting by date
 
     public Review(int reviewID, int guestID, int propertyID, double rating, String comment, Date date) {
         this.reviewID = reviewID;
@@ -31,7 +31,7 @@ public class Review implements HasId {
         this.reviewID = reviewID;
     }
 
-    public double getRating() {
+    public double getRating() { // Getter for rating (used in sorting)
         return rating;
     }
 
@@ -47,7 +47,7 @@ public class Review implements HasId {
         this.comment = comment;
     }
 
-    public Date getDate() {
+    public Date getDate() { // Getter for date (used in sorting)
         return date;
     }
 
@@ -89,5 +89,7 @@ public class Review implements HasId {
                 '}';
     }
 
-    public int getPropertyID() { return propertyID; }
+    public int getPropertyID() {
+        return propertyID;
+    }
 }
