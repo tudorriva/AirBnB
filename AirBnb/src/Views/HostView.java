@@ -78,14 +78,15 @@ public class HostView {
         System.out.print("Enter amenity description: ");
         String amenityDescription = scanner.nextLine();
         int id2 = HelperFunctions.randomId();
-        Amenity amenity = new Amenity(id2, amenityName, amenityDescription, prop_id);
+        Amenity amenity = new Amenity(id2, amenityName, amenityDescription);
 
         System.out.print("Enter cancellation policy description: ");
         String cancellationPolicyDescription = scanner.nextLine();
         int id3 = HelperFunctions.randomId();
         CancellationPolicy cancellationPolicy = new CancellationPolicy(id3, cancellationPolicyDescription);
 
-        controller.listProperty(prop_id, host, address, pricePerNight, description, location, amenity, cancellationPolicy);
+        List<Integer> amenityIDs = List.of(amenity.getAmenityID());
+        controller.listProperty(prop_id, host, address, pricePerNight, description, location, amenityIDs, cancellationPolicy);
     }
 
     private void addAmenity(Host host) {
@@ -107,11 +108,36 @@ public class HostView {
             return;
         }
 
-        System.out.print("Enter amenity name: ");
-        String name = scanner.nextLine();
-        System.out.print("Enter amenity description: ");
-        String description = scanner.nextLine();
+        Property property = properties.get(propertyIndex);
+        List<Amenity> existingAmenities = controller.getAmenitiesForProperty(property);
+        List<Amenity> allAmenities = controller.getAllAmenities();
 
-        controller.addAmenityToProperty(host, propertyIndex, name, description);
+        System.out.println("Existing amenities for this property:");
+        existingAmenities.forEach(amenity -> System.out.println(amenity.getName() + ": " + amenity.getDescription()));
+
+        System.out.println("\nAmenities that can be added:");
+        allAmenities.stream()
+                .filter(amenity -> !existingAmenities.contains(amenity))
+                .forEach(amenity -> System.out.println(amenity.getId() + ". " + amenity.getName() + ": " + amenity.getDescription()));
+
+        System.out.print("\nEnter amenity ID to add or 0 to create a new one: ");
+        int amenityId = Integer.parseInt(scanner.nextLine());
+
+        if (amenityId == 0) {
+            System.out.print("Enter new amenity name: ");
+            String name = scanner.nextLine();
+            System.out.print("Enter new amenity description: ");
+            String description = scanner.nextLine();
+            int newAmenityId = HelperFunctions.randomId();
+            Amenity newAmenity = new Amenity(newAmenityId, name, description);
+            controller.addAmenityToProperty(property, newAmenity);
+        } else {
+            Amenity amenity = controller.getAmenityById(amenityId);
+            if (amenity != null && !existingAmenities.contains(amenity)) {
+                controller.addAmenityToProperty(property, amenity);
+            } else {
+                System.out.println("Invalid amenity ID or amenity already exists on this property.");
+            }
+        }
     }
 }

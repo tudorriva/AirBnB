@@ -1,6 +1,5 @@
 package Services;
 
-
 import Entities.*;
 import Repository.IRepository;
 
@@ -184,6 +183,8 @@ public class PropertyBookingService {
     public void addAmenityToProperty(Property property, Amenity amenity) {
         if (property != null && amenity != null) {
             amenityRepo.create(amenity);
+            property.getAmenityIDs().add(amenity.getAmenityID());
+            propertyRepo.update(property);
             System.out.println("Amenity added to property: " + amenity.getName());
         }
     }
@@ -195,8 +196,8 @@ public class PropertyBookingService {
      * @return a list of amenities for the property
      */
     public List<Amenity> getAmenitiesForProperty(Property property) {
-        return amenityRepo.getAll().stream()
-                .filter(amenity -> amenity.getPropertyID() == property.getId())
+        return property.getAmenityIDs().stream()
+                .map(amenityRepo::read)
                 .collect(Collectors.toList());
     }
 
@@ -211,7 +212,7 @@ public class PropertyBookingService {
     }
 
     /**
-     * Filters properties by a specific location.
+     * Filters properties by location.
      *
      * @param location the location to filter properties by
      * @return a list of properties in the specified location
@@ -231,7 +232,7 @@ public class PropertyBookingService {
      * @param property the property to be booked
      * @param checkInDate the check-in date
      * @param checkOutDate the check-out date
-     * @return true if the booking was successful, false otherwise
+     * @return true if the booking is successful, false otherwise
      */
     public boolean bookProperty(Guest guest, Property property, Date checkInDate, Date checkOutDate) {
         if (checkAvailability(property.getId(), checkInDate, checkOutDate)) {
@@ -245,11 +246,9 @@ public class PropertyBookingService {
             Booking booking = new Booking(bookingId, checkOutDate, checkInDate, totalPrice, guest.getId(), property.getId(), payment);
 
             bookingRepo.create(booking);
-            // System.out.println("Booking created successfully for property: " + property.getAddress() + " with ID: " + booking.getId());
 
             return true;
         }
-        // System.out.println("Property is not available for the requested dates.");
         return false;
     }
 
@@ -261,7 +260,7 @@ public class PropertyBookingService {
      */
     public List<Booking> getBookingsForProperty(int propertyId) {
         return bookingRepo.getAll().stream()
-                .filter(booking -> booking.getPropertyId() == propertyId)
+                .filter(booking -> booking.getPropertyID() == propertyId)
                 .collect(Collectors.toList());
     }
 
@@ -288,6 +287,20 @@ public class PropertyBookingService {
         return guestRepo.getAll().stream()
                 .filter(guest -> guestBookingCount.getOrDefault(guest.getId(), 0L) > minBookings)
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Retrieves an amenity by its ID.
+     *
+     * @param id the ID of the amenity
+     * @return the amenity with the specified ID
+     */
+    public Amenity getAmenityById(int id) {
+        return amenityRepo.read(id);
+    }
+
+    public List<Amenity> getAllAmenities() {
+        return amenityRepo.getAll();
     }
 
     // -------------------- Review Management --------------------
@@ -381,11 +394,19 @@ public class PropertyBookingService {
      */
     public List<Payment> getTransactionHistoryForHost(int hostId) {
         return bookingRepo.getAll().stream()
-                .filter(booking -> getPropertyById(booking.getPropertyId()).getHostID() == hostId)
+                .filter(booking -> getPropertyById(booking.getPropertyID()).getHostID() == hostId)
                 .map(Booking::getPayment)
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Checks the availability of a property for the given dates.
+     *
+     * @param propertyId the ID of the property
+     * @param checkInDate the check-in date
+     * @param checkOutDate the check-out date
+     * @return true if the property is available, false otherwise
+     */
     public boolean checkAvailability(int propertyId, Date checkInDate, Date checkOutDate) {
         List<Booking> bookings = bookingRepo.getAll().stream()
                 .filter(booking -> booking.getPropertyID() == propertyId)

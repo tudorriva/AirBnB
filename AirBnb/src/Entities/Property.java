@@ -1,31 +1,29 @@
 package Entities;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.stream.Collectors;
 
-public class Property implements HasId , Bookable{
+public class Property implements HasId, Bookable {
     private int propertyID;
     private int hostID;
     private String address;
     private double pricePerNight;
     private String description;
     private Location location;
-    private Amenity amenity;
+    private List<Integer> amenityIDs;
     private CancellationPolicy cancellationPolicy;
 
-    public Property(int propertyID, String address, double pricePerNight, String description, Location location, Amenity amenity, CancellationPolicy cancellationPolicy, int hostID) {
+    public Property(int propertyID, String address, double pricePerNight, String description, Location location, List<Integer> amenityIDs, CancellationPolicy cancellationPolicy, int hostID) {
         this.propertyID = propertyID;
         this.hostID = hostID;
         this.address = address;
         this.pricePerNight = pricePerNight;
         this.description = description;
         this.location = location;
-        this.amenity = amenity;
+        this.amenityIDs = new ArrayList<>(amenityIDs); // Ensure amenityIDs is mutable
         this.cancellationPolicy = cancellationPolicy;
     }
-
-
 
     public Location getLocation() {
         return location;
@@ -35,12 +33,12 @@ public class Property implements HasId , Bookable{
         this.location = location;
     }
 
-    public Amenity getAmenity() {
-        return amenity;
+    public List<Integer> getAmenityIDs() {
+        return amenityIDs;
     }
 
-    public void setAmenity(Amenity amenity) {
-        this.amenity = amenity;
+    public void setAmenityIDs(List<Integer> amenityIDs) {
+        this.amenityIDs = new ArrayList<>(amenityIDs); // Ensure amenityIDs is mutable
     }
 
     public CancellationPolicy getCancellationPolicy() {
@@ -56,14 +54,6 @@ public class Property implements HasId , Bookable{
 
     public boolean checkAvailability() {
         return true;
-    }
-
-    public int getPropertyID() {
-        return propertyID;
-    }
-
-    public void setPropertyID(int propertyID) {
-        this.propertyID = propertyID;
     }
 
     public String getAddress() {
@@ -94,8 +84,9 @@ public class Property implements HasId , Bookable{
         return hostID;
     }
 
-    public void setHostID(int hostID) {
-        this.hostID = hostID;
+    @Override
+    public boolean checkAvailability(Date checkIn, Date checkOut) {
+        return false;
     }
 
     @Override
@@ -105,25 +96,6 @@ public class Property implements HasId , Bookable{
 
     @Override
     public void setId(int id) {
-        this.propertyID = id;
-    }
-
-    @Override
-    public String toString() {
-        return "Property{" +
-                "propertyID=" + propertyID +
-                ", hostID=" + hostID +
-                ", address='" + address + '\'' +
-                ", pricePerNight=" + pricePerNight +
-                ", description='" + description + '\'' +
-                ", location=" + location +
-                ", amenity=" + amenity +
-                ", cancellationPolicy=" + cancellationPolicy +
-                '}';
-    }
-
-    @Override
-    public boolean checkAvailability(Date checkIn, Date checkOut) {
-        return true;
+        this.propertyID = propertyID;
     }
 }

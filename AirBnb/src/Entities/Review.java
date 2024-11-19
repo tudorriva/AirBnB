@@ -65,6 +65,18 @@ public class Review implements HasId {
         this.reviewID = id;
     }
 
+    public int getGuestID() {
+        return guestID;
+    }
+
+    public void setGuestID(int guestID) {
+        this.guestID = guestID;
+    }
+
+    public void setPropertyID(int propertyID) {
+        this.propertyID = propertyID;
+    }
+
     @Override
     public String toString() {
         return "Review{" +

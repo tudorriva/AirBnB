@@ -8,7 +8,9 @@ import Views.AdminView;
 import Views.GuestView;
 import Views.HostView;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Scanner;
 
 public class PropertyBookingApp {
@@ -55,17 +57,17 @@ public class PropertyBookingApp {
         cancellationPolicyRepo.create(new CancellationPolicy(4, "Super Stricta"));
         cancellationPolicyRepo.create(new CancellationPolicy(5, "Nerambursabila"));
 
-        propertyRepo.create(new Property(1, "Strada Principala 123", 100.0, "Apartament confortabil", locationRepo.read(1), null, cancellationPolicyRepo.read(1), 1));
-        propertyRepo.create(new Property(2, "Strada Lateral 456", 150.0, "Casa spatioasa", locationRepo.read(2), null, cancellationPolicyRepo.read(2), 2));
-        propertyRepo.create(new Property(3, "Strada Secundara 789", 200.0, "Vila de lux", locationRepo.read(3), null, cancellationPolicyRepo.read(3), 3));
-        propertyRepo.create(new Property(4, "Strada Verde 101", 120.0, "Condo modern", locationRepo.read(4), null, cancellationPolicyRepo.read(4), 4));
-        propertyRepo.create(new Property(5, "Strada Albastra 202", 180.0, "Cottage fermecator", locationRepo.read(5), null, cancellationPolicyRepo.read(5), 5));
+        amenityRepo.create(new Amenity(1, "WiFi", "Internet de mare viteza"));
+        amenityRepo.create(new Amenity(2, "Piscina", "Piscina exterioara"));
+        amenityRepo.create(new Amenity(3, "Sala de fitness", "Sala de fitness complet echipata"));
+        amenityRepo.create(new Amenity(4, "Parcare", "Loc de parcare gratuit"));
+        amenityRepo.create(new Amenity(5, "Mic dejun", "Mic dejun gratuit"));
 
-        amenityRepo.create(new Amenity(1, "WiFi", "Internet de mare viteza", 1));
-        amenityRepo.create(new Amenity(2, "Piscina", "Piscina exterioara", 2));
-        amenityRepo.create(new Amenity(3, "Sala de fitness", "Sala de fitness complet echipata", 3));
-        amenityRepo.create(new Amenity(4, "Parcare", "Loc de parcare gratuit", 4));
-        amenityRepo.create(new Amenity(5, "Mic dejun", "Mic dejun gratuit", 5));
+        propertyRepo.create(new Property(1, "Strada Principala 123", 100.0, "Apartament confortabil", locationRepo.read(1), new ArrayList<>(List.of(1, 2)), cancellationPolicyRepo.read(1), 1));
+        propertyRepo.create(new Property(2, "Strada Lateral 456", 150.0, "Casa spatioasa", locationRepo.read(2), new ArrayList<>(List.of(2, 3)), cancellationPolicyRepo.read(2), 2));
+        propertyRepo.create(new Property(3, "Strada Secundara 789", 200.0, "Vila de lux", locationRepo.read(3), new ArrayList<>(List.of(3, 4)), cancellationPolicyRepo.read(3), 3));
+        propertyRepo.create(new Property(4, "Strada Verde 101", 120.0, "Condo modern", locationRepo.read(4), new ArrayList<>(List.of(4, 5)), cancellationPolicyRepo.read(4), 4));
+        propertyRepo.create(new Property(5, "Strada Albastra 202", 180.0, "Cottage fermecator", locationRepo.read(5), new ArrayList<>(List.of(1, 5)), cancellationPolicyRepo.read(5), 5));
 
         paymentRepo.create(new Payment(1, 100.0, new Date()));
         paymentRepo.create(new Payment(2, 150.0, new Date()));
@@ -127,7 +129,7 @@ public class PropertyBookingApp {
 
         PropertyBookingController controller = new PropertyBookingController(bookingService);
 
-        // bulkInitialize(hostRepo, guestRepo, propertyRepo, bookingRepo, reviewRepo, amenityRepo, locationRepo, cancellationPolicyRepo, paymentRepo);
+        bulkInitialize(hostRepo, guestRepo, propertyRepo, bookingRepo, reviewRepo, amenityRepo, locationRepo, cancellationPolicyRepo, paymentRepo);
 
         PropertyBookingApp app = new PropertyBookingApp(controller);
         app.run();

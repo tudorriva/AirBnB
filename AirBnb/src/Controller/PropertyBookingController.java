@@ -5,7 +5,6 @@ import Services.PropertyBookingService;
 import Helpers.HelperFunctions;
 
 import java.util.List;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.stream.Collectors;
 
@@ -45,10 +44,7 @@ public class PropertyBookingController {
         if (hosts.isEmpty()) {
             System.out.println("No hosts found.");
         } else {
-            System.out.println("Hosts found:");
-            for (Host host : hosts) {
-                System.out.println(host);
-            }
+            hosts.forEach(host -> System.out.println(host.getId() + ": " + host.getName()));
         }
     }
 
@@ -91,10 +87,18 @@ public class PropertyBookingController {
         if (properties.isEmpty()) {
             System.out.println("No properties found for this host.");
         } else {
-            System.out.println("Properties managed by " + host.getName() + ":");
-            for (Property property : properties) {
-                System.out.println(property);
-            }
+            properties.forEach(property -> {
+                System.out.println("Property ID: " + property.getId());
+                System.out.println("Address: " + property.getAddress());
+                System.out.println("Price per Night: " + property.getPricePerNight());
+                System.out.println("Description: " + property.getDescription());
+                System.out.println("Location: " + property.getLocation().getCity() + ", " + property.getLocation().getCountry());
+                System.out.println("Amenities: " + property.getAmenityIDs().stream()
+                        .map(id -> bookingService.getAmenityById(id).getName())
+                        .collect(Collectors.joining(", ")));
+                System.out.println("Cancellation Policy: " + property.getCancellationPolicy().getDescription());
+                System.out.println();
+            });
         }
     }
 
@@ -112,12 +116,14 @@ public class PropertyBookingController {
 
         System.out.println("Properties managed by host " + host.getName() + ":");
         for (Property property : properties) {
-            System.out.println("Property ID: " + property.getPropertyID());
+            System.out.println("Property ID: " + property.getId());
             System.out.println("Address: " + property.getAddress());
             System.out.println("Price per Night: " + property.getPricePerNight());
             System.out.println("Description: " + property.getDescription());
             System.out.println("Location: " + property.getLocation().getCity() + ", " + property.getLocation().getCountry());
-            System.out.println("Amenity: " + property.getAmenity().getName() + " - " + property.getAmenity().getDescription());
+            System.out.println("Amenities: " + property.getAmenityIDs().stream()
+                    .map(id -> bookingService.getAmenityById(id).getName())
+                    .collect(Collectors.joining(", ")));
             System.out.println("Cancellation Policy: " + property.getCancellationPolicy().getDescription());
             System.out.println();
         }
@@ -126,26 +132,26 @@ public class PropertyBookingController {
     /**
      * Lists a new property for a host.
      *
-     * @param host the host listing the property
-     * @param address the address of the property
-     * @param pricePerNight the price per night for the property
-     * @param description the description of the property
-     * @param location the location of the property
-     * @param amenity the amenity of the property
+     * @param host               the host listing the property
+     * @param address            the address of the property
+     * @param pricePerNight      the price per night for the property
+     * @param description        the description of the property
+     * @param location           the location of the property
+     * @param amenityIDs         the list of amenity IDs for the property
      * @param cancellationPolicy the cancellation policy of the property
      */
-    public void listProperty(int id, Host host, String address, double pricePerNight, String description, Location location, Amenity amenity, CancellationPolicy cancellationPolicy) {
-        Property property = new Property(id, address, pricePerNight, description, location, amenity, cancellationPolicy, host.getId());
+    public void listProperty(int id, Host host, String address, double pricePerNight, String description, Location location, List<Integer> amenityIDs, CancellationPolicy cancellationPolicy) {
+        Property property = new Property(id, address, pricePerNight, description, location, amenityIDs, cancellationPolicy, host.getId());
         bookingService.addProperty(property);
     }
 
     /**
      * Adds an amenity to a property managed by a host.
      *
-     * @param host the host managing the property
+     * @param host          the host managing the property
      * @param propertyIndex the index of the property in the host's property list
-     * @param name the name of the amenity
-     * @param description the description of the amenity
+     * @param name          the name of the amenity
+     * @param description   the description of the amenity
      */
     public void addAmenityToProperty(Host host, int propertyIndex, String name, String description) {
         List<Property> properties = getPropertiesForHost(host.getId());
@@ -156,7 +162,7 @@ public class PropertyBookingController {
 
         Property property = properties.get(propertyIndex);
         int id = HelperFunctions.randomId();
-        Amenity amenity = new Amenity(id, name, description, property.getPropertyID());
+        Amenity amenity = new Amenity(id, name, description);
         bookingService.addAmenityToProperty(property, amenity);
     }
 
@@ -181,10 +187,7 @@ public class PropertyBookingController {
         if (guests.isEmpty()) {
             System.out.println("No guests found.");
         } else {
-            System.out.println("Guests found:");
-            for (Guest guest : guests) {
-                System.out.println(guest);
-            }
+            guests.forEach(guest -> System.out.println(guest.getId() + ": " + guest.getName()));
         }
     }
 
@@ -220,9 +223,9 @@ public class PropertyBookingController {
     /**
      * Books a property for a guest.
      *
-     * @param guest the guest booking the property
-     * @param propertyId the ID of the property to be booked
-     * @param checkInDate the check-in date
+     * @param guest        the guest booking the property
+     * @param propertyId   the ID of the property to be booked
+     * @param checkInDate  the check-in date
      * @param checkOutDate the check-out date
      */
     public void bookProperty(Guest guest, int propertyId, Date checkInDate, Date checkOutDate) {
@@ -232,7 +235,7 @@ public class PropertyBookingController {
             if (success) {
                 System.out.println("Booking successful for property: " + property.getAddress());
             } else {
-                System.out.println("Booking failed. The property may not be available for the requested dates.");
+                System.out.println("Booking failed. Property is not available for the selected dates.");
             }
         } else {
             System.out.println("Invalid property ID.");
@@ -249,22 +252,30 @@ public class PropertyBookingController {
         if (bookings.isEmpty()) {
             System.out.println("No bookings found.");
         } else {
-            bookings.forEach(System.out::println);
+            bookings.forEach(booking -> {
+                System.out.println("Booking ID: " + booking.getId());
+                System.out.println("Property ID: " + booking.getPropertyID());
+                System.out.println("Check-in Date: " + booking.getCheckInDate());
+                System.out.println("Check-out Date: " + booking.getCheckOutDate());
+                System.out.println("Total Price: " + booking.getTotalPrice());
+                System.out.println();
+            });
         }
     }
 
     /**
      * Leaves a review for a property.
      *
-     * @param guest the guest leaving the review
+     * @param guest      the guest leaving the review
      * @param propertyId the ID of the property being reviewed
-     * @param rating the rating given by the guest
-     * @param comment the comment given by the guest
+     * @param rating     the rating given by the guest
+     * @param comment    the comment given by the guest
      */
     public void leaveReview(Guest guest, int propertyId, double rating, String comment) {
         Property property = bookingService.getPropertyById(propertyId);
         if (property != null) {
             bookingService.addReview(guest, property, rating, comment);
+            System.out.println("Review added for property: " + property.getAddress());
         } else {
             System.out.println("Invalid property ID.");
         }
@@ -280,7 +291,18 @@ public class PropertyBookingController {
         if (properties.isEmpty()) {
             System.out.println("No properties found for location: " + location);
         } else {
-            properties.forEach(System.out::println);
+            properties.forEach(property -> {
+                System.out.println("Property ID: " + property.getId());
+                System.out.println("Address: " + property.getAddress());
+                System.out.println("Price per Night: " + property.getPricePerNight());
+                System.out.println("Description: " + property.getDescription());
+                System.out.println("Location: " + property.getLocation().getCity() + ", " + property.getLocation().getCountry());
+                System.out.println("Amenities: " + property.getAmenityIDs().stream()
+                        .map(id -> bookingService.getAmenityById(id).getName())
+                        .collect(Collectors.joining(", ")));
+                System.out.println("Cancellation Policy: " + property.getCancellationPolicy().getDescription());
+                System.out.println();
+            });
         }
     }
 
@@ -296,7 +318,18 @@ public class PropertyBookingController {
         if (properties.isEmpty()) {
             System.out.println("No properties available on: " + date);
         } else {
-            properties.forEach(System.out::println);
+            properties.forEach(property -> {
+                System.out.println("Property ID: " + property.getId());
+                System.out.println("Address: " + property.getAddress());
+                System.out.println("Price per Night: " + property.getPricePerNight());
+                System.out.println("Description: " + property.getDescription());
+                System.out.println("Location: " + property.getLocation().getCity() + ", " + property.getLocation().getCountry());
+                System.out.println("Amenities: " + property.getAmenityIDs().stream()
+                        .map(id -> bookingService.getAmenityById(id).getName())
+                        .collect(Collectors.joining(", ")));
+                System.out.println("Cancellation Policy: " + property.getCancellationPolicy().getDescription());
+                System.out.println();
+            });
         }
     }
 
@@ -305,8 +338,7 @@ public class PropertyBookingController {
         if (guests.isEmpty()) {
             System.out.println("No guests found with more than " + minBookings + " bookings.");
         } else {
-            System.out.println("Guests with more than " + minBookings + " bookings:");
-            guests.forEach(System.out::println);
+            guests.forEach(guest -> System.out.println(guest.getId() + ": " + guest.getName()));
         }
     }
 
@@ -331,10 +363,18 @@ public class PropertyBookingController {
         if (properties.isEmpty()) {
             System.out.println("No properties found.");
         } else {
-            System.out.println("Properties found:");
-            for (Property property : properties) {
-                System.out.println(property);
-            }
+            properties.forEach(property -> {
+                System.out.println("Property ID: " + property.getId());
+                System.out.println("Address: " + property.getAddress());
+                System.out.println("Price per Night: " + property.getPricePerNight());
+                System.out.println("Description: " + property.getDescription());
+                System.out.println("Location: " + property.getLocation().getCity() + ", " + property.getLocation().getCountry());
+                System.out.println("Amenities: " + property.getAmenityIDs().stream()
+                        .map(id -> bookingService.getAmenityById(id).getName())
+                        .collect(Collectors.joining(", ")));
+                System.out.println("Cancellation Policy: " + property.getCancellationPolicy().getDescription());
+                System.out.println();
+            });
         }
     }
 
@@ -359,10 +399,18 @@ public class PropertyBookingController {
         if (properties.isEmpty()) {
             System.out.println("No properties found for location: " + location);
         } else {
-            System.out.println("Properties found at location " + location + ":");
-            for (Property property : properties) {
-                System.out.println(property);
-            }
+            properties.forEach(property -> {
+                System.out.println("Property ID: " + property.getId());
+                System.out.println("Address: " + property.getAddress());
+                System.out.println("Price per Night: " + property.getPricePerNight());
+                System.out.println("Description: " + property.getDescription());
+                System.out.println("Location: " + property.getLocation().getCity() + ", " + property.getLocation().getCountry());
+                System.out.println("Amenities: " + property.getAmenityIDs().stream()
+                        .map(id -> bookingService.getAmenityById(id).getName())
+                        .collect(Collectors.joining(", ")));
+                System.out.println("Cancellation Policy: " + property.getCancellationPolicy().getDescription());
+                System.out.println();
+            });
         }
     }
 
@@ -371,8 +419,18 @@ public class PropertyBookingController {
         if (properties.isEmpty()) {
             System.out.println("No properties found in the specified location: " + location.getCity() + ", " + location.getCountry());
         } else {
-            System.out.println("Properties in " + location.getCity() + ", " + location.getCountry() + ":");
-            properties.forEach(System.out::println);
+            properties.forEach(property -> {
+                System.out.println("Property ID: " + property.getId());
+                System.out.println("Address: " + property.getAddress());
+                System.out.println("Price per Night: " + property.getPricePerNight());
+                System.out.println("Description: " + property.getDescription());
+                System.out.println("Location: " + property.getLocation().getCity() + ", " + property.getLocation().getCountry());
+                System.out.println("Amenities: " + property.getAmenityIDs().stream()
+                        .map(id -> bookingService.getAmenityById(id).getName())
+                        .collect(Collectors.joining(", ")));
+                System.out.println("Cancellation Policy: " + property.getCancellationPolicy().getDescription());
+                System.out.println();
+            });
         }
     }
 
@@ -382,7 +440,7 @@ public class PropertyBookingController {
      * Adds an amenity to a property.
      *
      * @param property the property to which the amenity is to be added
-     * @param amenity the amenity to be added
+     * @param amenity  the amenity to be added
      */
     public void addAmenityToProperty(Property property, Amenity amenity) {
         bookingService.addAmenityToProperty(property, amenity);
@@ -400,21 +458,29 @@ public class PropertyBookingController {
         if (amenities.isEmpty()) {
             System.out.println("No amenities found for this property.");
         } else {
-            System.out.println("Amenities for property " + property.getAddress() + ":");
-            for (Amenity amenity : amenities) {
-                System.out.println(amenity);
-            }
+            amenities.forEach(amenity -> System.out.println(amenity.getName() + ": " + amenity.getDescription()));
         }
     }
 
+    public List<Amenity> getAmenitiesForProperty(Property property) {
+        return bookingService.getAmenitiesForProperty(property);
+    }
+
+    public List<Amenity> getAllAmenities() {
+        return bookingService.getAllAmenities();
+    }
+
+    public Amenity getAmenityById(int id) {
+        return bookingService.getAmenityById(id);
+    }
     // -------------------- Booking Operations --------------------
 
     /**
      * Books a property for a guest.
      *
-     * @param guest the guest booking the property
-     * @param property the property to be booked
-     * @param checkInDate the check-in date
+     * @param guest        the guest booking the property
+     * @param property     the property to be booked
+     * @param checkInDate  the check-in date
      * @param checkOutDate the check-out date
      */
     public void bookProperty(Guest guest, Property property, Date checkInDate, Date checkOutDate) {
@@ -423,7 +489,7 @@ public class PropertyBookingController {
         if (success) {
             System.out.println("Booking successful for property: " + property.getAddress());
         } else {
-            System.out.println("Booking failed. The property may not be available for the requested dates.");
+            System.out.println("Booking failed for property: " + property.getAddress());
         }
     }
 
@@ -438,22 +504,26 @@ public class PropertyBookingController {
         if (bookings.isEmpty()) {
             System.out.println("No bookings found for this property.");
         } else {
-            System.out.println("Bookings for property ID " + propertyId + ":");
             for (Booking booking : bookings) {
-                System.out.println(booking);
+                System.out.println("Booking ID: " + booking.getId());
+                System.out.println("Guest ID: " + booking.getGuestID());
+                System.out.println("Check-in Date: " + booking.getCheckInDate());
+                System.out.println("Check-out Date: " + booking.getCheckOutDate());
+                System.out.println("Total Price: " + booking.getTotalPrice());
+                System.out.println();
             }
         }
     }
 
-    // -------------------- Review Operations --------------------
+// -------------------- Review Operations --------------------
 
     /**
      * Adds a review for a property.
      *
-     * @param guest the guest leaving the review
+     * @param guest    the guest leaving the review
      * @param property the property being reviewed
-     * @param rating the rating given by the guest
-     * @param comment the comment given by the guest
+     * @param rating   the rating given by the guest
+     * @param comment  the comment given by the guest
      */
     public void addReview(Guest guest, Property property, double rating, String comment) {
         bookingService.addReview(guest, property, rating, comment);
@@ -471,28 +541,31 @@ public class PropertyBookingController {
         if (reviews.isEmpty()) {
             System.out.println("No reviews found for this property.");
         } else {
-            System.out.println("Reviews for property ID " + propertyId + ":");
             for (Review review : reviews) {
-                System.out.println(review);
+                System.out.println("Review ID: " + review.getId());
+                System.out.println("Guest ID: " + review.getGuestID());
+                System.out.println("Rating: " + review.getRating());
+                System.out.println("Comment: " + review.getComment());
+                System.out.println("Date: " + review.getDate());
+                System.out.println();
             }
         }
     }
 
-    // -------------------- Payment Operations --------------------
+// -------------------- Payment Operations --------------------
 
     /**
      * Processes a payment for a booking.
      *
-     * @param guest the guest making the payment
+     * @param guest     the guest making the payment
      * @param bookingId the ID of the booking
      */
     public void makePayment(Guest guest, int bookingId) {
         Booking booking = bookingService.getBookingById(bookingId);
         if (booking != null && booking.getGuestID() == guest.getId()) {
             bookingService.processPaymentForBooking(booking);
-            System.out.println("Payment successful for booking ID: " + bookingId);
         } else {
-            System.out.println("Invalid booking ID or this booking does not belong to you.");
+            System.out.println("Invalid booking ID or guest ID.");
         }
     }
 
@@ -506,7 +579,6 @@ public class PropertyBookingController {
         if (payments.isEmpty()) {
             System.out.println("No payments received by this host.");
         } else {
-            System.out.println("Payments received by " + host.getName() + ":");
             for (Payment payment : payments) {
                 System.out.println(payment);
             }

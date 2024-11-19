@@ -4,7 +4,6 @@ public class Amenity implements HasId {
     private int amenityID;
     private String name;
     private String description;
-    private int propertyID;
 
     @Override
     public String toString() {
@@ -12,15 +11,13 @@ public class Amenity implements HasId {
                 "amenityID=" + amenityID +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
-                ", propertyID=" + propertyID +
                 '}';
     }
 
-    public Amenity(int amenityID, String name, String description, int propertyID) {
+    public Amenity(int amenityID, String name, String description) {
         this.amenityID = amenityID;
         this.name = name;
         this.description = description;
-        this.propertyID = propertyID;
     }
 
     public String getDescription() {
@@ -46,15 +43,6 @@ public class Amenity implements HasId {
     public void setDescription(String description) {
         this.description = description;
     }
-
-    public int getPropertyID() {
-        return propertyID;
-    }
-
-    public void setPropertyID(int propertyID) {
-        this.propertyID = propertyID;
-    }
-
 
     @Override
     public int getId() {
