@@ -1,6 +1,8 @@
 package Entities;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
@@ -13,8 +15,10 @@ public class Property implements HasId, Bookable {
     private Location location;
     private List<Integer> amenityIDs;
     private CancellationPolicy cancellationPolicy;
+    private List<Review> reviews; // List to store reviews for this property
 
-    public Property(int propertyID, String address, double pricePerNight, String description, Location location, List<Integer> amenityIDs, CancellationPolicy cancellationPolicy, int hostID) {
+    public Property(int propertyID, String address, double pricePerNight, String description, Location location,
+                    List<Integer> amenityIDs, CancellationPolicy cancellationPolicy, int hostID) {
         this.propertyID = propertyID;
         this.hostID = hostID;
         this.address = address;
@@ -23,6 +27,7 @@ public class Property implements HasId, Bookable {
         this.location = location;
         this.amenityIDs = new ArrayList<>(amenityIDs); // Ensure amenityIDs is mutable
         this.cancellationPolicy = cancellationPolicy;
+        this.reviews = new ArrayList<>(); // Initialize the reviews list
     }
 
     public Location getLocation() {
@@ -47,13 +52,6 @@ public class Property implements HasId, Bookable {
 
     public void setCancellationPolicy(CancellationPolicy cancellationPolicy) {
         this.cancellationPolicy = cancellationPolicy;
-    }
-
-    public void addReview() {
-    }
-
-    public boolean checkAvailability() {
-        return true;
     }
 
     public String getAddress() {
@@ -97,5 +95,36 @@ public class Property implements HasId, Bookable {
     @Override
     public void setId(int id) {
         this.propertyID = propertyID;
+    }
+
+    /**
+     * Adds a review to the property.
+     *
+     * @param review the review to add
+     */
+    public void addReview(Review review) {
+        this.reviews.add(review);
+    }
+
+    /**
+     * Sorts the reviews based on the given criteria.
+     *
+     * @param criteria the criteria to sort by ("rating" or "date")
+     */
+    public void sortReviews(String criteria) {
+        switch (criteria.toLowerCase()) {
+            case "rating" -> reviews.sort(Comparator.comparingDouble(Review::getRating).reversed());
+            case "date" -> reviews.sort(Comparator.comparing(Review::getDate).reversed());
+            default -> throw new IllegalArgumentException("Invalid sorting criteria. Use 'rating' or 'date'.");
+        }
+    }
+
+    /**
+     * Gets the sorted list of reviews.
+     *
+     * @return the list of reviews
+     */
+    public List<Review> getReviews() {
+        return new ArrayList<>(reviews);
     }
 }
