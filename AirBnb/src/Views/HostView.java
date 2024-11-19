@@ -4,6 +4,7 @@ import Controller.PropertyBookingController;
 import Entities.*;
 import Helpers.HelperFunctions;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Scanner;
 
@@ -41,6 +42,7 @@ public class HostView {
                 case 4 -> controller.viewTransactionHistoryForHost(host);
                 case 5 -> controller.showPropertiesForHost(host);
                 case 6 -> deleteProperty(host);
+                case 7 -> sortReviewsForHostProperties(host);
                 case 0 -> running = false;
                 default -> System.out.println("Invalid choice. Please try again.");
             }
@@ -55,6 +57,7 @@ public class HostView {
         System.out.println("4. View Transaction History");
         System.out.println("5. Show Properties Managed by Host");
         System.out.println("6. Delete a Property");
+        System.out.println("7. Sort and View Reviews for Properties");
         System.out.println("0. Go back");
         System.out.print("Choose an option: ");
     }
@@ -164,5 +167,40 @@ public class HostView {
 
         Property property = properties.get(propertyIndex);
         controller.deleteProperty(property.getId());
+    }
+
+    private void sortReviewsForHostProperties(Host host) {
+        List<Property> properties = controller.getPropertiesForHost(host.getId());
+        if (properties.isEmpty()) {
+            System.out.println("No properties found for this host.");
+            return;
+        }
+
+        System.out.println("Select a property to view and sort reviews:");
+        for (int i = 0; i < properties.size(); i++) {
+            System.out.println((i + 1) + ". " + properties.get(i).getAddress());
+        }
+        System.out.print("Enter property number: ");
+        int propertyIndex = Integer.parseInt(scanner.nextLine()) - 1;
+
+        if (propertyIndex < 0 || propertyIndex >= properties.size()) {
+            System.out.println("Invalid property number.");
+            return;
+        }
+
+        Property property = properties.get(propertyIndex);
+        List<Review> reviews = controller.getReviewsForProperty(property);
+
+        if (reviews.isEmpty()) {
+            System.out.println("No reviews found for this property.");
+            return;
+        }
+
+        reviews.sort(Comparator.comparingDouble(Review::getRating).reversed());
+        System.out.println("\nReviews sorted by rating (highest to lowest):");
+        reviews.forEach(review -> System.out.println(
+                "Rating: " + review.getRating() +
+                        ", Comment: " + review.getComment() +
+                        ", Date: " + review.getDate()));
     }
 }

@@ -27,6 +27,18 @@ public class PropertyBookingController {
     // -------------------- Host Operations --------------------
 
     /**
+     * Retrieves reviews for a specific property.
+     *
+     * @param property The property whose reviews are to be fetched.
+     * @return A list of reviews for the property.
+     */
+    public List<Review> getReviewsForProperty(Property property) {
+        // Call with sorting by rating in descending order
+        return bookingService.getReviewsForProperty(property.getId(), true, true); // Sort by rating, descending
+    }
+
+
+    /**
      * Adds a new host.
      *
      * @param host the host to be added

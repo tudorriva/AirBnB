@@ -338,11 +338,22 @@ public class PropertyBookingService {
      * @param propertyId the ID of the property
      * @return a list of reviews for the property
      */
-    public List<Review> getReviewsForProperty(int propertyId) {
-        return reviewRepo.getAll().stream()
+    public List<Review> getReviewsForProperty(int propertyId, boolean sortByRating, boolean descending) {
+        List<Review> reviews = reviewRepo.getAll().stream()
                 .filter(review -> review.getPropertyID() == propertyId)
                 .collect(Collectors.toList());
+
+        // If sorting is enabled, perform the sorting
+        if (sortByRating) {
+            reviews.sort((r1, r2) -> {
+                int comparison = Double.compare(r1.getRating(), r2.getRating());
+                return descending ? -comparison : comparison; // Reverse comparison if descending
+            });
+        }
+
+        return reviews;
     }
+
 
     // -------------------- Utility Methods --------------------
 
