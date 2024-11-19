@@ -1,4 +1,4 @@
-Property Booking System (AirBnB)
+Entities.Property Entities.Booking System (AirBnB)
 
 Overview
 
@@ -22,11 +22,11 @@ Reservations
 
 Payments
 
-•	Payment: Make/Recieve payments within the app.
+•	Entities.Payment: Make/Recieve payments within the app.
 
-•	Payment History: Customers and users can view the payment history.
+•	Entities.Payment History: Customers and users can view the payment history.
 
-User Roles
+Entities.User Roles
 
 •	Hosts: Manage properties, view bookings, and receive reviews.
 
