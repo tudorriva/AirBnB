@@ -1,5 +1,7 @@
 package Entities;
 
+import java.util.Objects;
+
 public class Location implements HasId {
     private int locationID;
     private String city;
@@ -60,5 +62,13 @@ public class Location implements HasId {
     @Override
     public void setId(int id) {
         this.locationID = id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Location location = (Location) o;
+        return Objects.equals(city, location.city) && Objects.equals(country, location.country);
     }
 }

@@ -40,6 +40,7 @@ public class HostView {
                 case 3 -> controller.viewPaymentsForHost(host);
                 case 4 -> controller.viewTransactionHistoryForHost(host);
                 case 5 -> controller.showPropertiesForHost(host);
+                case 6 -> deleteProperty(host);
                 case 0 -> running = false;
                 default -> System.out.println("Invalid choice. Please try again.");
             }
@@ -53,6 +54,7 @@ public class HostView {
         System.out.println("3. View Payments Received");
         System.out.println("4. View Transaction History");
         System.out.println("5. Show Properties Managed by Host");
+        System.out.println("6. Delete a Property");
         System.out.println("0. Go back");
         System.out.print("Choose an option: ");
     }
@@ -139,5 +141,28 @@ public class HostView {
                 System.out.println("Invalid amenity ID or amenity already exists on this property.");
             }
         }
+    }
+
+    private void deleteProperty(Host host) {
+        List<Property> properties = controller.getPropertiesForHost(host.getId());
+        if (properties.isEmpty()) {
+            System.out.println("No properties found for this host.");
+            return;
+        }
+
+        System.out.println("Select a property to delete:");
+        for (int i = 0; i < properties.size(); i++) {
+            System.out.println((i + 1) + ". " + properties.get(i).getAddress());
+        }
+        System.out.print("Enter property number: ");
+        int propertyIndex = Integer.parseInt(scanner.nextLine()) - 1;
+
+        if (propertyIndex < 0 || propertyIndex >= properties.size()) {
+            System.out.println("Invalid property number.");
+            return;
+        }
+
+        Property property = properties.get(propertyIndex);
+        controller.deleteProperty(property.getId());
     }
 }

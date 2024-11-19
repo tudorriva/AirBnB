@@ -41,7 +41,7 @@ public class GuestView {
                 case 1 -> bookProperty(guest);
                 case 2 -> controller.viewBookings(guest);
                 case 3 -> leaveReview(guest);
-                case 4 -> makePayment(guest);
+                // case 4 -> makePayment(guest);
                 case 5 -> filterPropertiesByLocation();
                 case 6 -> viewPropertiesByDate();
                 case 0 -> running = false;
@@ -55,7 +55,7 @@ public class GuestView {
         System.out.println("1. Book a Property");
         System.out.println("2. View My Bookings");
         System.out.println("3. Leave a Review");
-        System.out.println("4. Make a Payment");
+        // System.out.println("4. Make a Payment");
         System.out.println("5. Filter Properties by Location");
         System.out.println("6. View Properties by Date");
         System.out.println("0. Go back");
@@ -91,7 +91,7 @@ public class GuestView {
     private void makePayment(Guest guest) {
         System.out.print("Enter booking ID to pay for: ");
         int bookingId = Integer.parseInt(scanner.nextLine());
-        controller.makePayment(guest, bookingId);
+        // controller.makePayment(guest, bookingId);
     }
 
     private void filterPropertiesByLocation() {

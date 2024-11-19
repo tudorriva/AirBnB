@@ -185,7 +185,6 @@ public class PropertyBookingService {
             amenityRepo.create(amenity);
             property.getAmenityIDs().add(amenity.getAmenityID());
             propertyRepo.update(property);
-            System.out.println("Amenity added to property: " + amenity.getName());
         }
     }
 
@@ -221,6 +220,18 @@ public class PropertyBookingService {
         return propertyRepo.getAll().stream()
                 .filter(property -> property.getLocation().equals(location))
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * Deletes a property by its ID.
+     *
+     * @param propertyId the ID of the property to be deleted
+     */
+    public void deleteProperty(int propertyId) {
+        Property property = propertyRepo.read(propertyId);
+        if (property != null) {
+            propertyRepo.delete(propertyId);
+        }
     }
 
     // -------------------- Booking Management --------------------
@@ -275,17 +286,14 @@ public class PropertyBookingService {
     }
 
     /**
-     * Filters guests who have made more than a specified number of bookings.
+     * Filters guests by booking count.
      *
-     * @param minBookings the minimum number of bookings a guest must have
-     * @return a list of guests with bookings above the specified threshold
+     * @param minBookings the minimum number of bookings
+     * @return a list of guests with at least the specified number of bookings
      */
     public List<Guest> filterGuestsByBookingCount(int minBookings) {
-        Map<Integer, Long> guestBookingCount = bookingRepo.getAll().stream()
-                .collect(Collectors.groupingBy(Booking::getGuestID, Collectors.counting()));
-
         return guestRepo.getAll().stream()
-                .filter(guest -> guestBookingCount.getOrDefault(guest.getId(), 0L) > minBookings)
+                .filter(guest -> getBookingsForGuest(guest.getId()).size() >= minBookings)
                 .collect(Collectors.toList());
     }
 
@@ -299,6 +307,11 @@ public class PropertyBookingService {
         return amenityRepo.read(id);
     }
 
+    /**
+     * Retrieves all amenities.
+     *
+     * @return a list of all amenities
+     */
     public List<Amenity> getAllAmenities() {
         return amenityRepo.getAll();
     }
@@ -314,13 +327,9 @@ public class PropertyBookingService {
      * @param comment the comment given by the guest
      */
     public void addReview(Guest guest, Property property, double rating, String comment) {
-        if (guest != null && property != null) {
-            Review review = new Review(0, guest.getId(), property.getId(), rating, comment, new Date());
-            reviewRepo.create(review);
-            System.out.println("Review added for property: " + property.getAddress());
-        } else {
-            System.out.println("Invalid guest or property for review.");
-        }
+        int reviewId = generateUniqueId();
+        Review review = new Review(reviewId, guest.getId(), property.getId(), rating, comment, new Date());
+        reviewRepo.create(review);
     }
 
     /**
@@ -366,9 +375,7 @@ public class PropertyBookingService {
         Payment payment = booking.getPayment();
         if (!payment.isProcessed()) {
             payment.processPayment();
-            System.out.println("Payment processed for booking ID: " + booking.getId());
-        } else {
-            System.out.println("Payment has already been processed for this booking.");
+            paymentRepo.update(payment);
         }
     }
 

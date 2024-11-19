@@ -1,3 +1,4 @@
+// PropertyBookingController.java
 package Controller;
 
 import Entities.*;
@@ -143,6 +144,7 @@ public class PropertyBookingController {
     public void listProperty(int id, Host host, String address, double pricePerNight, String description, Location location, List<Integer> amenityIDs, CancellationPolicy cancellationPolicy) {
         Property property = new Property(id, address, pricePerNight, description, location, amenityIDs, cancellationPolicy, host.getId());
         bookingService.addProperty(property);
+        System.out.println("Property listed successfully.");
     }
 
     /**
@@ -164,6 +166,7 @@ public class PropertyBookingController {
         int id = HelperFunctions.randomId();
         Amenity amenity = new Amenity(id, name, description);
         bookingService.addAmenityToProperty(property, amenity);
+        System.out.println("Amenity added successfully.");
     }
 
     // -------------------- Guest Operations --------------------
@@ -233,9 +236,9 @@ public class PropertyBookingController {
         if (property != null) {
             boolean success = bookingService.bookProperty(guest, property, checkInDate, checkOutDate);
             if (success) {
-                System.out.println("Booking successful for property: " + property.getAddress());
+                System.out.println("Property booked successfully.");
             } else {
-                System.out.println("Booking failed. Property is not available for the selected dates.");
+                System.out.println("Property is not available for the selected dates.");
             }
         } else {
             System.out.println("Invalid property ID.");
@@ -434,6 +437,11 @@ public class PropertyBookingController {
         }
     }
 
+    public void deleteProperty(int propertyId) {
+        bookingService.deleteProperty(propertyId);
+        System.out.println("Property deleted successfully.");
+    }
+
     // -------------------- Amenity Operations --------------------
 
     /**
@@ -444,129 +452,48 @@ public class PropertyBookingController {
      */
     public void addAmenityToProperty(Property property, Amenity amenity) {
         bookingService.addAmenityToProperty(property, amenity);
-        System.out.println("Amenity added to property: " + property.getAddress());
+        System.out.println("Amenity added successfully.");
     }
 
     /**
-     * Lists amenities for a property.
+     * Retrieves amenities for a property.
      *
-     * @param property the property whose amenities are to be listed
+     * @param property the property whose amenities are to be retrieved
+     * @return a list of amenities for the property
      */
-    public void listAmenitiesForProperty(Property property) {
-        List<Amenity> amenities = bookingService.getAmenitiesForProperty(property);
-
-        if (amenities.isEmpty()) {
-            System.out.println("No amenities found for this property.");
-        } else {
-            amenities.forEach(amenity -> System.out.println(amenity.getName() + ": " + amenity.getDescription()));
-        }
-    }
-
     public List<Amenity> getAmenitiesForProperty(Property property) {
         return bookingService.getAmenitiesForProperty(property);
     }
 
+    /**
+     * Retrieves all amenities.
+     *
+     * @return a list of all amenities
+     */
     public List<Amenity> getAllAmenities() {
         return bookingService.getAllAmenities();
     }
 
+    /**
+     * Retrieves an amenity by its ID.
+     *
+     * @param id the ID of the amenity
+     * @return the amenity with the specified ID
+     */
     public Amenity getAmenityById(int id) {
         return bookingService.getAmenityById(id);
     }
-    // -------------------- Booking Operations --------------------
 
-    /**
-     * Books a property for a guest.
-     *
-     * @param guest        the guest booking the property
-     * @param property     the property to be booked
-     * @param checkInDate  the check-in date
-     * @param checkOutDate the check-out date
-     */
-    public void bookProperty(Guest guest, Property property, Date checkInDate, Date checkOutDate) {
-        boolean success = bookingService.bookProperty(guest, property, checkInDate, checkOutDate);
-
-        if (success) {
-            System.out.println("Booking successful for property: " + property.getAddress());
-        } else {
-            System.out.println("Booking failed for property: " + property.getAddress());
-        }
-    }
-
-    /**
-     * Lists bookings for a property.
-     *
-     * @param propertyId the ID of the property
-     */
-    public void listBookingsForProperty(int propertyId) {
-        List<Booking> bookings = bookingService.getBookingsForProperty(propertyId);
-
-        if (bookings.isEmpty()) {
-            System.out.println("No bookings found for this property.");
-        } else {
-            for (Booking booking : bookings) {
-                System.out.println("Booking ID: " + booking.getId());
-                System.out.println("Guest ID: " + booking.getGuestID());
-                System.out.println("Check-in Date: " + booking.getCheckInDate());
-                System.out.println("Check-out Date: " + booking.getCheckOutDate());
-                System.out.println("Total Price: " + booking.getTotalPrice());
-                System.out.println();
-            }
-        }
-    }
-
-// -------------------- Review Operations --------------------
-
-    /**
-     * Adds a review for a property.
-     *
-     * @param guest    the guest leaving the review
-     * @param property the property being reviewed
-     * @param rating   the rating given by the guest
-     * @param comment  the comment given by the guest
-     */
-    public void addReview(Guest guest, Property property, double rating, String comment) {
-        bookingService.addReview(guest, property, rating, comment);
-        System.out.println("Review added for property: " + property.getAddress());
-    }
-
-    /**
-     * Lists reviews for a property.
-     *
-     * @param propertyId the ID of the property
-     */
-    public void listReviewsForProperty(int propertyId) {
-        List<Review> reviews = bookingService.getReviewsForProperty(propertyId);
-
-        if (reviews.isEmpty()) {
-            System.out.println("No reviews found for this property.");
-        } else {
-            for (Review review : reviews) {
-                System.out.println("Review ID: " + review.getId());
-                System.out.println("Guest ID: " + review.getGuestID());
-                System.out.println("Rating: " + review.getRating());
-                System.out.println("Comment: " + review.getComment());
-                System.out.println("Date: " + review.getDate());
-                System.out.println();
-            }
-        }
-    }
-
-// -------------------- Payment Operations --------------------
+    // -------------------- Payment Operations --------------------
 
     /**
      * Processes a payment for a booking.
      *
-     * @param guest     the guest making the payment
-     * @param bookingId the ID of the booking
+     * @param booking the booking for which the payment is to be processed
      */
-    public void makePayment(Guest guest, int bookingId) {
-        Booking booking = bookingService.getBookingById(bookingId);
-        if (booking != null && booking.getGuestID() == guest.getId()) {
-            bookingService.processPaymentForBooking(booking);
-        } else {
-            System.out.println("Invalid booking ID or guest ID.");
-        }
+    public void processPaymentForBooking(Booking booking) {
+        bookingService.processPaymentForBooking(booking);
+        System.out.println("Payment processed successfully.");
     }
 
     /**
