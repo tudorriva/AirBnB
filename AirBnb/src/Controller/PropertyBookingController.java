@@ -540,4 +540,38 @@ public class PropertyBookingController {
             }
         }
     }
+
+    public void listAvailablePropertiesByDateSortedByPrice(Date date) {
+        List<Property> properties = bookingService.getAvailablePropertiesByDateSortedByPrice(date);
+
+        if (properties.isEmpty()) {
+            System.out.println("No properties available on: " + date);
+        } else {
+            properties.forEach(property -> {
+                System.out.println("Property ID: " + property.getId());
+                System.out.println("Address: " + property.getAddress());
+                System.out.println("Price per Night: " + property.getPricePerNight());
+                System.out.println("Description: " + property.getDescription());
+                System.out.println("Location: " + property.getLocation().getCity() + ", " + property.getLocation().getCountry());
+                System.out.println("Amenities: " + property.getAmenityIDs().stream()
+                        .map(id -> bookingService.getAmenityById(id).getName())
+                        .collect(Collectors.joining(", ")));
+                System.out.println("Cancellation Policy: " + property.getCancellationPolicy().getDescription());
+                System.out.println();
+            });
+        }
+    }
+
+    /**
+     * Retrieves properties sorted by total reviews in descending order.
+     */
+//    public void listPropertiesByTotalReviews() {
+//        List<Property> properties = bookingService.getPropertiesByTotalReviews();
+//
+//        if (properties.isEmpty()) {
+//            System.out.println("No properties found.");
+//        } else {
+//            properties.forEach(property -> System.out.println(property.getId() + ": " + property.getAddress() + " - Total Reviews: " + bookingService.getReviewsForProperty(property.getId()).size()));
+//        }
+//    }
 }

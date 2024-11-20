@@ -44,6 +44,8 @@ public class GuestView {
                 // case 4 -> makePayment(guest);
                 case 5 -> filterPropertiesByLocation();
                 case 6 -> viewPropertiesByDate();
+                case 7 -> viewAvailablePropertiesByDateSortedByPrice();
+                // case 8 -> controller.listPropertiesByTotalReviews();
                 case 0 -> running = false;
                 default -> System.out.println("Invalid choice. Please try again.");
             }
@@ -58,6 +60,8 @@ public class GuestView {
         // System.out.println("4. Make a Payment");
         System.out.println("5. Filter Properties by Location");
         System.out.println("6. View Properties by Date");
+        System.out.println("7. View Available Properties by Date Sorted by Price");
+       //  System.out.println("8. View Properties by number of reviews");
         System.out.println("0. Go back");
         System.out.print("Choose an option: ");
     }
@@ -108,6 +112,16 @@ public class GuestView {
             System.out.print("Enter date (YYYY-MM-DD): ");
             Date date = new SimpleDateFormat("yyyy-MM-dd").parse(scanner.nextLine());
             controller.viewAllPropertiesByDate(date);
+        } catch (Exception e) {
+            System.out.println("Invalid date format. Please enter in YYYY-MM-DD format.");
+        }
+    }
+
+    private void viewAvailablePropertiesByDateSortedByPrice() {
+        try {
+            System.out.print("Enter date (YYYY-MM-DD): ");
+            Date date = new SimpleDateFormat("yyyy-MM-dd").parse(scanner.nextLine());
+            controller.listAvailablePropertiesByDateSortedByPrice(date);
         } catch (Exception e) {
             System.out.println("Invalid date format. Please enter in YYYY-MM-DD format.");
         }

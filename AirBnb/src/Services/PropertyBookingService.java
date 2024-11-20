@@ -437,4 +437,44 @@ public class PropertyBookingService {
         }
         return true; // No overlapping bookings
     }
+
+    /**
+     * Retrieves available properties for a specific date sorted by price.
+     *
+     * @param date the date to check availability
+     * @return a list of available properties sorted by price
+     */
+    public List<Property> getAvailablePropertiesByDateSortedByPrice(Date date) {
+        return propertyRepo.getAll().stream()
+                .filter(property -> checkAvailability(property.getId(), date, date))
+                .sorted(Comparator.comparingDouble(Property::getPricePerNight))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Retrieves properties sorted by total reviews in descending order.
+     *
+     * @return a list of properties sorted by total reviews
+     */
+    public List<Property> getPropertiesByTotalReviews() {
+        Map<Property, Double> propertyReviewAverage = new HashMap<>();
+
+        for (Property property : propertyRepo.getAll()) {
+            List<Review> reviews = reviewRepo.getAll().stream()
+                    .filter(review -> review.getPropertyID() == property.getId())
+                    .collect(Collectors.toList());
+
+            double averageRating = reviews.stream()
+                    .mapToDouble(Review::getRating)
+                    .average()
+                    .orElse(0.0);
+
+            propertyReviewAverage.put(property, averageRating);
+        }
+
+        return propertyReviewAverage.entrySet().stream()
+                .sorted(Map.Entry.<Property, Double>comparingByValue().reversed())
+                .map(Map.Entry::getKey)
+                .collect(Collectors.toList());
+    }
 }
